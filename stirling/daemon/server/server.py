@@ -45,7 +45,6 @@ class StirlingServer(Daemon):
                     # Connection closed.
                     conn.close()
                     self.info('Player {0} disconnected.'.format(self.connections_player[conn].name))
-                    if conn in self.connections_player: del self.connections_player[conn]
                     self.connections.remove(conn)
                 else:
                     if conn in self.logging_in:
