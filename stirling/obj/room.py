@@ -11,6 +11,7 @@ class Room(MasterObject):
     def __init__(self):
         super(Room, self).__init__()
         self.rm_nametag('object')
+        self.lookables = {}
         self.exits = []
     def write(self, data):
         """
@@ -21,4 +22,3 @@ class Room(MasterObject):
         # Need to add a link to the microsyntax interpretter when we have it.
         for item in self.inventory:
             item.tell(data+'\n')
-    

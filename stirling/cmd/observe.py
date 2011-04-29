@@ -1,9 +1,11 @@
 def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
     '''
-    usage: observe [target]
+    usage: observe -n [target]
         returns the description of the target, defaulting to current environment
+        target is currently either the calling object, their environment, or 
+        anything in the calling object's inventory or environment
+        -n sets whether to render the name or not
     '''
-    near = []
     output = ''
     if target in ['room','here','environment']:
         if n is True:
