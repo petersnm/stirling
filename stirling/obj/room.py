@@ -29,7 +29,7 @@ class Room(MasterObject):
     	for dir in exits:
     		if exits[dir][1]:
     			self.add_exit(dir, exits[dir][0], exits[dir][1])
-    		else
+    		else:
     			self.add_exit(dir, exits[dir])
     def add_exit(dir, obj, hidden=False):
     	self.exits[dir] = (obj, hidden)
