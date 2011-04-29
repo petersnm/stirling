@@ -25,8 +25,12 @@ class Room(MasterObject):
     	#Insert a control structure to place the exits within this text.
     
     #Exit functions
-    def set_exits(exit_dict):
-    	self.exits = exit_dict
+    def set_exits(exits):
+    	for dir in exits:
+    		if exits[dir][1]:
+    			self.add_exit(dir, exits[dir][0], exits[dir][1])
+    		else
+    			self.add_exit(dir, exits[dir])
     def add_exit(dir, obj, hidden=False):
     	self.exits[dir] = (obj, hidden)
     def remove_exit(dir):
