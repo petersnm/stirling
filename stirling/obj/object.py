@@ -16,11 +16,16 @@ class MasterObject:
         # (NOTE: Does this actually work?  I've read that [] is == None, which 
         # makes this kind of null and void.  Can we overwrite that if it's 
         # the proper approach?
-        self.nametags = ['object']
-        self.name = 'generic thing'
-        self.desc = 'This is a thing.'
-        self.inventory = []
-        self.environment = __class__ # This *does* make a blank class, right?
+        self.properties = {
+                'name': 'an object',
+                'nametags': ['object'],
+                'desc': 'this is a thing.',
+                'inventory': [],
+                'environment': __class__, # no it doesn't.
+        } 
+        # dev not for emsenn:
+        #   please give /all/ of those setters, I'm doing it this way for 
+        #   database stuff, it'll make it much easier.
         # Initialize the object's logging
         self.logger = logging.getLogger(self.__module__)
 
@@ -64,20 +69,39 @@ class MasterObject:
             else:
                 return False
 
+    @property
+    def name(self):
+        return self.properties['name']
 
-    def set_name(self, name):
-        ''' set_name(name)
-            Sets the object's name to string 'name'.  An object's name acts as 
-            its main displayed identity.  For example, a man named Fat Sally 
-            might use set_name('Fat Sally')
-        '''
-        if isinstance(name, str):
+    @name.setter
+    def name(self, name):
+        # basestring is the parent of str and unicode
+        if isinstance(name, basestring): 
             self.rm_nametag(self.name)
             self.add_nametag(name.lower())
-            self.name = name
+            self.properties['name'] = name
         else:
-            self.warning('set_name() passed incorrect type; expecting string')
-        return
+            self.warning('name setter passed incorrect type; expecting string')
+
+    # @name.deleter
+    # def name(self):
+    #     del self.properties['name']
+    # I can't think of any good reason that we would want to delete names, but
+    # here's the syntax if we /do/ need to.
+
+    # def set_name(self, name):
+    #     ''' set_name(name)
+    #         Sets the object's name to string 'name'.  An object's name acts as 
+    #         its main displayed identity.  For example, a man named Fat Sally 
+    #         might use set_name('Fat Sally')
+    #     '''
+    #     if isinstance(name, str):
+    #         self.rm_nametag(self.name)
+    #         self.add_nametag(name.lower())
+    #         self.name = name
+    #     else:
+    #         self.warning('set_name() passed incorrect type; expecting string')
+    #     return
 
     def set_desc(self, desc):
         if isinstance(desc, str):
