@@ -39,30 +39,6 @@ class MasterObject:
         self.tell('++ERROR++ Please report the following:\n'+message) 
         return
 
-    def add_nametag(self, tag):
-        if isinstance(tag, str):
-            if self.nametags.count(tag) is 0:
-                self.nametags.append(tag)
-                return
-        if isinstance(tag, list):
-            for item in tag:
-                if self.nametags.count(tag) is 0:
-                    self.nametags.append(tag)
-                    return
-    def rm_nametag(self, tag):
-        if isinstance(tag, str):
-            if self.nametags.count(tag) is 0:
-                return
-            else:
-                self.nametags.remove(tag)
-                return
-    def has_nametag(self, tag):
-        if isinstance(tag, str):
-            if self.nametag.count(tag) >= 1:
-                return True
-            else:
-                return False
-
     @property
     def nametags(self):
         return self.properties['nametags']
