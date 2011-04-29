@@ -33,17 +33,50 @@ class Living(MasterObject):
         try:
             if args is not None:
                 kwargs = {}
-                normargs = []
+                normarg = ''
+                substr = None
+                subname = ''
+                subtype = 0 # none
                 for arg in args:
-                    if arg.startswith('--'):
-                        name, value = arg[2:].split('=')
-                        kwargs[name] = value
-                    elif arg.startswith('-'):
-                        for name in arg[1:]:
-                            kwargs[name] = True
+                    if substr is not None:
+                        if subtype == 1:
+                            if arg.endswith('"'):
+                                if len(arg) < 1:
+                                    substr = substr + ' '
+                                else:
+                                    substr = substr + ' ' + arg[:-1]
+                                kwargs[subname] = substr    
+                                subname = ''
+                                substr = None
+                            else:
+                                substr = substr +' ' + arg
+                        elif subtype == 2:
+                            substr += ' ' + arg
                     else:
-                        normargs.append(arg)
-            return getattr(cmd, 'do_%s' % (cmd_name,))(self, *normargs, **kwargs)
+                        if arg.startswith('--'):
+                            name, value = arg[2:].split('=')
+                            kwargs[name] = value
+                            if value.startswith('"'):
+                                if value.endswith('"'):
+                                    if len(value) < 3:
+                                        kwargs[name] = ''
+                                    else:
+                                        kwargs[name] = value[1:-1]
+                                else:
+                                    substr = value[1:]
+                                    subtype = 1 # kw sub
+                                    subname = name
+                        elif arg.startswith('-'):
+                            for name in arg[1:]:
+                                kwargs[name] = True
+                        else:
+                            substr = arg
+                            subtype = 2
+            if substr is not None:
+                return getattr(cmd, 'do_%s' % (cmd_name,))(self, substr, **kwargs)
+            else:
+                return getattr(cmd, 'do_%s' % (cmd_name,))(self, **kwargs)
+
         except TypeError:
             self.tell('Too many/few arguments to given to %s\n' % (cmd_name,))
             return False

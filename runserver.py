@@ -7,7 +7,6 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 log.debug('main')
 
-sys.path.append('../')
 from stirling.daemon.server.server import runserver
 
 try:

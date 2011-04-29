@@ -22,4 +22,6 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
                     output += '['+item.name+']\n'
                 output += item.desc+'\n'
     obj.tell(output)
+    if output is '':
+        obj.warning('Target '+target+' not found.\n')
     return
