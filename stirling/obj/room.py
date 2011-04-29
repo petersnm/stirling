@@ -33,10 +33,7 @@ class Room(MasterObject):
     	del exit[dir]
     def exits(visible=True):
     	results_array = []
-    	if visible == True: #return only the visible exits
-    		for dir in self.exits: #Iterate through the exits
-    			if self.exits[dir][1] == False: #Selects the visible exits
-    				results_array.append(dir)
-    		return results_array #Hopefully this indentation is correct
+    	if visible: 
+    		return [k if exits[k][1] for k in keys(self.exits)]
     	else: #This allows for the system and creators to see all exits
     		return keys(self.exits)
