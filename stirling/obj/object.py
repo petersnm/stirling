@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 class MasterObject:
     def __init__(self):
         self.properties = {
-                'name': 'an object',
+                'name': 'object',
                 'nametags': ['object'],
                 'desc': 'this is a thing.',
                 'inventory': [],
@@ -73,7 +73,7 @@ class MasterObject:
     def name(self, name):
         # basestring is the parent of str and unicode
         if isinstance(name, str): 
-            self.rm_nametag(self.name)
+            self.nametags.remove(self.properties['name'])
             self.add_nametag(name.lower())
             self.properties['name'] = name
         else:
