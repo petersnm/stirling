@@ -11,17 +11,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 class MasterObject:
     def __init__(self):
-        # Any variable which should be persistent needs to be set to default 
-        # values in the __init__ of the library inheritable
-        # (NOTE: Does this actually work?  I've read that [] is == None, which 
-        # makes this kind of null and void.  Can we overwrite that if it's 
-        # the proper approach?
         self.properties = {
                 'name': 'an object',
                 'nametags': ['object'],
                 'desc': 'this is a thing.',
                 'inventory': [],
-                'environment': __class__, # no it doesn't.
         } 
         # dev not for emsenn:
         #   please give /all/ of those setters, I'm doing it this way for 
@@ -70,13 +64,39 @@ class MasterObject:
                 return False
 
     @property
+    def nametags(self):
+        return self.properties['nametags']
+
+    @nametags.setter
+    def nametags(self, tags):
+        if isinstance(tags, list):
+            for tag in tags:
+                add_nametag(tag)
+        else:
+            self.warning('nametag setter passed incorrec type; expecting list')
+
+    @nametags.deleter
+    def nametags(self, tag):
+        if isinstance(tag, str):
+            if self.properties['nametags'].count(tag) > 0:
+                self.properties['nametags'].remove(tag)
+
+    def add_nametag(self, tag):
+        if isinstance(tag, str):
+            if self.properties['nametags'].count(tag) is 0:
+                self.properties['nametags'].append(tag)
+        else:
+            self.warning('add_nametag() was expecting string')
+
+
+    @property
     def name(self):
         return self.properties['name']
 
     @name.setter
     def name(self, name):
         # basestring is the parent of str and unicode
-        if isinstance(name, basestring): 
+        if isinstance(name, str): 
             self.rm_nametag(self.name)
             self.add_nametag(name.lower())
             self.properties['name'] = name
@@ -123,13 +143,13 @@ class MasterObject:
     # doing everything in memory via a database, this will change lots.  Oh boy!
     def add_inventory(self, item):
         if isinstance(item, MasterObject) == True:
-            self.inventory.append(item)
+            self.properties['inventory'].append(item)
             return
     def inventory(self, item=None):
         if item == None:
             return inventory
         else:
-            if self.inventory.count(item) > 0:
+            if self.properties['inventory'].count(item) > 0:
                 return True
             else:
                 return False

@@ -51,7 +51,7 @@ class StirlingServer(Daemon):
                         # Outline the login process here!
                         username=''.join(random.choice(string.ascii_lowercase) for x in range(8))
                         player = Player(conn)
-                        player.set_name(username)
+                        player.name = username
                         self.connections_player[conn] = player
                         foobar = Garden()
                         player.move(foobar)
