@@ -32,8 +32,7 @@ class Room(MasterObject):
     def remove_exit(dir):
     	del exit[dir]
     def exits(visible=True):
-    	results_array = []
-    	if visible: 
-    		return [k if exits[k][1] for k in keys(self.exits)]
+    	if visible:
+            return [k for k in keys(self.exits) if self.exits[k][1]]
     	else: #This allows for the system and creators to see all exits
     		return keys(self.exits)
