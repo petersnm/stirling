@@ -7,7 +7,7 @@ def find_cmd(cmd_name, cmd_modules):
             __import__('stirling.%s.%s' % (module, cmd_name)) # try to import it
             cmd = sys.modules['stirling.%s.%s' % (module, cmd_name)]
             return cmd
-        except ImportError:
+        except (ImportError, TypeError):
             continue # not here, check the next one
     else:
         # command doesn't exist

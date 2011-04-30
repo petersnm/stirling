@@ -12,7 +12,7 @@ from stirling.obj.room import Room
 class Garden(Room):
     def __init__(self):
         super(Garden, self).__init__()
-        self.set_name('peaceful garden')
+        self.name = 'peaceful garden'
         self.set_desc('Enclosed by a tall wooden fence, this small grassy '
           'garden seems very private.  There is a small stone bench nestled up '
           'against the trunk of a blossoming cherry tree, short dense grass '

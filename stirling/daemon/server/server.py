@@ -69,7 +69,7 @@ class StirlingServer(Daemon):
             self.handle()
 
 def runserver():
-    server = StirlingServer(('localhost', 5878))
+    server = StirlingServer(('0.0.0.0', 5878))
     try:
         server.handle_forever()
     except KeyboardInterrupt:
