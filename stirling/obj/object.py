@@ -9,6 +9,47 @@ The master object of the MUD, all objects inherit it at some point
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+from stirling.daemon.database import database
+from stirling.daemon.objects import objects
+
+class Properties(dict):
+    def __init__(self, parent, _dict={}, from_db=False):
+        dict.__init__(self, _dict)
+        self.parent = parent
+        # this is becasue if it's from the DB, we dont' need to fill the db, but if it isn't, we do.
+        if not from_db:
+            self.update(_dict)
+        self['_id'] = database.objects.insert(self)
+        self.parent._id = self['_id']
+        self['_class'] = self.parent.__class__.__name__
+        self['_module'] = self.parent.__class__.__module__
+        objects[self['_id']] = self.parent
+    
+    def __setitem__(self, item, value):
+        dict.__setitem__(self, item, value)
+        database.objects.insert(self)
+        
+    def __delitem__(self, item):
+        dict.__delitem__(item)
+        database.objects.insert(self)
+
+    def save(self):
+        database.objects.insert(self)
+
+
+class Inventory(list):
+    def __init__(self, parent, _list=[], from_db=False):
+        list.__init__(self, _list)
+        self.parent = parent
+        
+    def search(self, nametag):
+        l = []
+        for obj_id in self:
+            obj = objects.get(obj_id)
+            if nametag in obj.nametags:
+                l.append(obj_id)
+        return l
+
 class MasterObject:
     def __init__(self):
         # Any variable which should be persistent needs to be set to default 
@@ -16,14 +57,14 @@ class MasterObject:
         # (NOTE: Does this actually work?  I've read that [] is == None, which 
         # makes this kind of null and void.  Can we overwrite that if it's 
         # the proper approach?
-        self.properties = {
+        self.properties = Properties(self, {
                 'name': 'an object',
                 'nametags': ['object'],
                 'desc': 'this is a thing.',
                 'inventory': [],
-                'environment': __class__, # no it doesn't.
-        } 
-        # dev not for emsenn:
+#                'environment': __class__, # no it doesn't.
+        }, from_db=False)
+        # dev note for emsenn:
         #   please give /all/ of those setters, I'm doing it this way for 
         #   database stuff, it'll make it much easier.
         # Initialize the object's logging
@@ -76,7 +117,7 @@ class MasterObject:
     @name.setter
     def name(self, name):
         # basestring is the parent of str and unicode
-        if isinstance(name, basestring): 
+        if isinstance(name, str): 
             self.rm_nametag(self.name)
             self.add_nametag(name.lower())
             self.properties['name'] = name

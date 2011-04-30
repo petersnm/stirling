@@ -10,6 +10,7 @@ logger.debug('Imported')
 
 from pymongo import Connection
 
-class Database(Connection):
-    def __init__(self):
-        super(Database, self).__init()
+# needs moar config
+
+database = Connection().stirling
+logger.debug('Database init\'d')
