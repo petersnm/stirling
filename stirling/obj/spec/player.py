@@ -13,6 +13,7 @@ class Player(Living):
         super(Player, self).__init__(**kw)
         self.exclude += ['connection', 'handle_data']
         self.connection = conn
+        self.cmd_modules += ['cmd.std','cmd.dev']
 
     def tell(self, data):
         super(Player, self).tell(data)

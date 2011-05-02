@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 log.debug('main')
 
-from stirling.daemon.server.server import runserver
+from stirling.daemon.server.mud import runserver
 
 try:
     log.info('Starting server')
