@@ -12,7 +12,7 @@ import select
 import random
 import string
 
-from stirling.obj.spec.daemon import Daemon
+import stirling.obj.spec.daemon
 from stirling.obj.spec.player import Player
 from stirling.daemon.objects import load_object, get_object
 from world.dev.room.garden import Garden

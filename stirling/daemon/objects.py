@@ -4,10 +4,16 @@ logging.debug("Imported")
 
 import sys
 from pymongo.objectid import ObjectId
-
+from stirling.obj.spec.daemon import Daemon
 from stirling.daemon.database.mongo import database
 
 objects = {}
+
+class Memory():
+    def __init__():
+        pass
+        #super(Memory, self).__init__()
+
 
 class NoSuchItemError(LookupError):
     pass
