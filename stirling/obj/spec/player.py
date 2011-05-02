@@ -9,8 +9,9 @@ to players.
 from stirling.obj.living.living import Living
 
 class Player(Living):
-    def __init__(self, conn):
-        super(Player, self).__init__()
+    def __init__(self, conn, **kw):
+        super(Player, self).__init__(**kw)
+        self.exclude += ['connection', 'handle_data']
         self.connection = conn
 
     def tell(self, data):

@@ -12,8 +12,9 @@ from stirling.obj.object import MasterObject
 from stirling.cmd import find_cmd
 
 class Living(MasterObject):
-    def __init__(self):
-        super(Living, self).__init__()
+    def __init__(self, **kw):
+        super(Living, self).__init__(**kw)
+        self.exclude += ['parse_lines']
         self.cmd_modules = ['cmd']
 
     def parse_line(self, line):

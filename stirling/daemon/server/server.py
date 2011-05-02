@@ -14,11 +14,14 @@ import string
 
 from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
+from stirling.daemon.objects import load_object, get_object
 from world.dev.room.garden import Garden
 
 class StirlingServer(Daemon):
     def __init__(self, addr):
         super(StirlingServer, self).__init__()
+        self.exclude += ['socket', 'connections', 'logging_in',
+        'connections_player']
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(addr)
@@ -53,7 +56,8 @@ class StirlingServer(Daemon):
                         player = Player(conn)
                         player.name = username
                         self.connections_player[conn] = player
-                        foobar = Garden()
+                        foobar = load_object('world.dev.room.garden.Garden')
+                        self.debug(foobar)
                         player.move(foobar)
                         self.logging_in.remove(conn)
                         conn.send(b'You are now logged in, congrats.\n')

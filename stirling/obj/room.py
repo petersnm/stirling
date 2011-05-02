@@ -8,8 +8,8 @@ emsenn@Stirling 190411
 from stirling.obj.object import MasterObject
 
 class Room(MasterObject):
-    def __init__(self):
-        super(Room, self).__init__()
+    def __init__(self, **kw):
+        super(Room, self).__init__(**kw)
         self.name = 'room'
         self.lookables = {}
         self.exits = {}

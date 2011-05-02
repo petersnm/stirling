@@ -1,3 +1,5 @@
+from stirling.daemon.objects import get_object
+
 def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
     '''
     usage: observe -n [target]
@@ -6,11 +8,12 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
         anything in the calling object's inventory or environment
         -n sets whether to render the name or not
     '''
+    obj.debug(obj.properties)
     output = ''
     if target in ['room','here','environment']:
         if n is True:
             output += '['+obj.environment.name+']\n'
-        output += obj.environment.desc+'\n'
+        output += get_object(obj.environment).desc+'\n'
     elif target in ['self','me',obj.name]:
         if n is True:
             output += '['+obj.name+']\n'
