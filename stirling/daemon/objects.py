@@ -5,7 +5,7 @@ logging.debug("Imported")
 import sys
 from pymongo.objectid import ObjectId
 
-from stirling.daemon.database import database
+from stirling.daemon.database.mongo import database
 
 objects = {}
 

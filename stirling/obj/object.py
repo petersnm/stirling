@@ -9,8 +9,9 @@ The master object of the MUD, all objects inherit it at some point
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-from stirling.daemon.database import database
+from stirling.daemon.database.mongo import database
 from stirling.daemon.objects import objects, load_object, get_object
+
 
 class Properties(dict):
     def __init__(self, parent, from_dict={}, from_db=False):

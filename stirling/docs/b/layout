@@ -1,0 +1,40 @@
+stirling # 's __init__ should have aliases to the global functions, clone(), remember(), etc.
+    .cmd 
+        .dev # Are you a developer?
+            .test
+        .living # Can has animation?
+            .observe
+            .go
+        .sapient # Requires the caller to have intelligence, basically
+            .say
+        .std # OOC commands, don't need to ahve a body to be used
+            .help
+            .tell
+            .alias
+    .daemon # Objects that have one instance, and are kept running
+        .server # Let the proles in
+            .mud
+            .http
+        .database # save things
+            .mongo # DB interaction
+            .properties # Properties dict
+            .logging # Logging dict
+        .object # Handles the cloning of new objects
+    .docs # documentation
+        .concepts # gameplay concepts
+        .dev # How to dev
+    .obj # Every object in the MUD
+        .living # Things that move on their own
+            .sapient # Things that can do complex things (speak, hold citizenship, etc.)
+        .room # base inheritance for all rooms
+        .object # MasterObject
+        .spec # Speeecial things
+            .player # Handle inputs from terminal
+            .daemon # Inheritable for stirling.daemon
+data
+    # database info
+world
+    .b
+    .testsuite
+    .dev
+    .docs
