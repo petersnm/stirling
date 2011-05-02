@@ -43,7 +43,7 @@ class StirlingServer(Daemon):
                 new_conn.send(b'Welcome to the Stirling Engine.  Please hit enter.\n')
                 self.info('New player connected.')
             elif conn in self.connections:
-                recv_data = conn.recv(1024).decode()
+                recv_data = conn.recv(1024)
                 if recv_data == '':
                     # Connection closed.
                     conn.close()
@@ -65,9 +65,10 @@ class StirlingServer(Daemon):
                     else:
                         # If they've been logged in, pass the text to the player's
                         # object.
+                        decoded_data = recv_data.decode(errors='replace')
                         player = self.connections_player[conn]
-                        self.debug('Received data from {0}: {1}'.format(player.name, recv_data))
-                        player.handle_data(recv_data)
+                        self.debug('Received data from {0}: {1}'.format(player.name, decoded_data))
+                        player.handle_data(decoded_data)
     def handle_forever(self):
         while True:
             self.handle()
