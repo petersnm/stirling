@@ -55,7 +55,7 @@ class Living(MasterObject):
                             substr += ' ' + arg
                     else:
                         if arg.startswith('--'):
-                            name, value = arg[2:].split('=')
+                            name, value = arg[2:].split('=',1)
                             kwargs[name] = value
                             if value.startswith('"'):
                                 if value.endswith('"'):

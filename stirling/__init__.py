@@ -1,1 +1,1 @@
-from stirling.globs import *
+from stirling.globals import *
