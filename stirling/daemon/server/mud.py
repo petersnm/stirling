@@ -1,25 +1,26 @@
 """
-/lib/server/server.py
-abzde@Stirling
-280411 emsenn@Stirling
-
-The main socket server of Stirling.  Really overly simple at the moment, 
-but as we're just getting started, not too set on what we need.
+The main server of the MUD, this file handles the socket server and its clients.  
+This most likely needs to be expanded to handle telnet command characters, MCCP, and
+MXP.
 """
 
 import socket
 import select
 import random
 import string
+from random import choice
+import stirling
 
 from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
 from stirling.daemon.objects import load_object, get_object
-from world.dev.room.garden import Garden
 
 class MUDServer(Daemon):
-    def __init__(self, addr):
-        super(MUDServer, self).__init__()
+    '''MUDServer() is used to create a socket server capable of handling text 
+    clients.  These clients are expected to be using, at most basic, netcat, 
+    and on the more sophisticated end, clients like Mudlet and MUSHClient'''
+    def __init__(self, addr, **kw):
+        super(MUDServer, self).__init__(**kw)
         self.exclude += ['socket', 'connections', 'logging_in',
         'connections_player']
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,9 +41,13 @@ class MUDServer(Daemon):
                 # Add them to the login queue.
                 self.logging_in.append(new_conn)
                 # Connects are shown this first.
-                new_conn.send(b'Welcome to the Stirling Engine.  Please hit enter.\n')
+                # TODO: Negotiate MCCP
+                # TODO: Negotiate MXP
+                new_conn.send(bytes('{0}\nv{1}\n    {2}\n\n{3}'.format(stirling.MUD_NAME, 
+                  stirling.MUD_VERSION, choice(stirling.MUD_SPLASH), stirling.MUD_GREET), 'ascii'))
                 self.info('New player connected.')
             elif conn in self.connections:
+                # Sterilize input HERE
                 recv_data = conn.recv(1024)
                 if recv_data == '':
                     # Connection closed.
@@ -52,11 +57,13 @@ class MUDServer(Daemon):
                 else:
                     if conn in self.logging_in:
                         # Outline the login process here!
+                        # Fine if username exists/is valid: find_user(recv_data)
+                        # if find_user(ster_data).__class__ is 
                         username=''.join(random.choice(string.ascii_lowercase) for x in range(8))
                         player = Player(conn)
                         player.name = username
                         self.connections_player[conn] = player
-                        foobar = load_object('world.dev.room.garden.Garden')
+                        foobar = load_object('world.testsuite.room.garden.Garden')
                         self.debug(foobar)
                         player.move(foobar)
                         self.logging_in.remove(conn)

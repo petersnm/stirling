@@ -6,6 +6,7 @@ abzde@Stirling
 The master object of the MUD, all objects inherit it at some point
 """
 
+# This will have to be replaced by
 import logging
 logging.basicConfig(level=logging.DEBUG)
 

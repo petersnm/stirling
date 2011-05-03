@@ -12,7 +12,7 @@ class Cafe(Room):
           'of two small streets.  A counter behind which lies a variety of brewing '
           'paraphenalia is offset from the north wall, while a door south leads '
           'out into the test town'
-        self.lookables = {
+        '''self.lookables = {
           ['building','cafe','bar','restaurant',]:(['brick','small'],
             self.desc),
           ['streets','roads',]:(['two',],
@@ -27,4 +27,4 @@ class Cafe(Room):
           }
         self.exits = {
           'south' : 'world.dev.room.street', # Implicitly add hidden flag as false?
-          }
+          }'''
