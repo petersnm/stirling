@@ -15,7 +15,7 @@ class Living(MasterObject):
     def __init__(self, **kw):
         super(Living, self).__init__(**kw)
         self.exclude += ['parse_lines']
-        self.cmd_modules = ['cmd']
+        self.cmd_modules = ['cmd.living']
 
     def parse_line(self, line):
         cmd = False

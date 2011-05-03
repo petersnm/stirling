@@ -9,54 +9,8 @@ The master object of the MUD, all objects inherit it at some point
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-from stirling.daemon.database.mongo import database
+from stirling.daemon.database import database, Properties
 from stirling.daemon.objects import objects, load_object, get_object
-
-
-class Properties(dict):
-    def __init__(self, parent, from_dict={}, from_db=False):
-        dict.__init__(self, from_dict)
-        self.parent = parent
-        # this is becasue if it's from the DB, we dont' need to fill the db, but if it isn't, we do.
-        if not from_db:
-            self['_id'] = database.objects.insert(self)
-            self.parent.__dict__['_id'] = self['_id']
-            self['_class'] = self.parent.__class__.__name__
-            self['_module'] = self.parent.__class__.__module__
-            objects[self['_id']] = self.parent
-
-    
-    def __setitem__(self, item, value):
-        try:
-            self.parent.debug('item set '+item+":"+value)
-        except:
-            pass
-        dict.__setitem__(self, item, value)
-        database.objects.save(self)
-
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
-
-    def __delitem__(self, item):
-        dict.__delitem__(item)
-        database.objects.save(self)
-
-    def save(self):
-        database.objects.save(self)
-
-
-class Inventory(list):
-    def __init__(self, parent, _list=[], from_db=False):
-        list.__init__(self, _list)
-        self.parent = parent
-        
-    def search(self, nametag):
-        l = []
-        for obj_id in self:
-            obj = objects.get(obj_id)
-            if nametag in obj.nametags:
-                l.append(obj_id)
-        return l
 
 class MasterObject(object):
     def __init__(self, from_dict={}, from_db=False):
@@ -77,6 +31,7 @@ class MasterObject(object):
         self.logger = logging.getLogger(self.__module__)
         
 
+    # These need to be replaced once we have a logging daemon
     def debug(self, message):
         self.logger.debug(message)
         return
@@ -96,6 +51,10 @@ class MasterObject(object):
         if attr in self.exclude:
             self.__dict__[attr] = value
         else:
+            # These are if checks to try and filter out special variables
+            # It should be rewritten to iterate through a list for special 
+            # variables and run their setters, so that things that inherit
+            # MasterObject can add in other special properties.
             if attr == 'name':
                 if isinstance(value, str): 
                     self.debug('fuck the hell')
@@ -128,20 +87,13 @@ class MasterObject(object):
         if attr in self.exclude:
             # why are you deleting something that's in .exclude, they're mostly
             # core functions. do we want to disallow this?
+            # yes -- emsenn
             del self.__dict__[attr]
         else:
             del self.properties[attr]
 
     def save(self):
         self.properties.save()
-
-#    @nametags.deleter
-#    that doesn't work how you think it does emsenn, I'll fix it sometime, but
-#    not the thing I'm concerned with ATM.
-#    def nametags(self, tag):
-#        if isinstance(tag, str):
-#            if self.properties['nametags'].count(tag) > 0:
-#                self.properties['nametags'].remove(tag)
 
     def add_nametag(self, tag):
         if isinstance(tag, str):
@@ -184,3 +136,16 @@ class MasterObject(object):
         if isinstance(message, str):
             pass
         pass
+
+class Inventory(list):
+    def __init__(self, parent, _list=[], from_db=False):
+        list.__init__(self, _list)
+        self.parent = parent
+        
+    def search(self, nametag):
+        l = []
+        for obj_id in self:
+            obj = objects.get(obj_id)
+            if nametag in obj.nametags:
+                l.append(obj_id)
+        return l

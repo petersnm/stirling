@@ -1,59 +1,49 @@
-stirling # 's __init__ should have aliases to the global functions, clone(), remember(), etc.
+stirling
+    .__init__
     .cmd
         .__init__
             .find_cmd(name, paths)
-                # Search for the command name in the array paths
-        .dev # Are you a developer?
+        .dev
             .test
-        .living # Can has animation?
+        .living
             .observe
                 .do_observe()
-                    # Render the living's environment's description
             .go
                 .do_go()
-                    # Move the living
-        .sapient # Requires the caller to have intelligence, basically
+        .sapient
             .say
                 do_say()
-                    # Broadcast a message to the room
-        .std # OOC commands, don't need to ahve a body to be used
+        .std
             .help
-                # Search [buncha shit] for helpful info
             .tell
-                # Send a message to another player
             .alias
-                # Handle aliases
-    .daemon # Objects that have one instance, and are kept running
+    .daemon
         .__init__
             from stirling.daemon.server.mud import MUDServer
             from stirling.daemon.database.properties import Properties()
-        .server # Let the proles in
+        .server
             .mud
-                # raw text server
                 class MUDServer(Daemon)
-            .http # Totally unnecessary for now, but we know we'll ahve it
-                # web server
-                class HTTPServer(Daemon)
-        .database # save things
+            .http
+                .HTTPServer(Daemon)
+        .database
             .mongo
-                # create the Database connection
+                .Database(Daemon)
+                    clone(path)
+                    get(_id)
             .properties
-                # Properties idct
-                class Properties()
+                .Properties(dict)
             .logging
-                # Logging dict
         .object
-            # Handles the cloning of new objects
             .remember(id)
-                # Recreates object instance id
             .clone(path)
-                # Creates a new instance and returns the id
             .get(id)
-                # Returns object instance id   
     .docs
-        # documentation
-        .concepts # gameplay concepts
-        .dev # How to dev
+    .globals
+        .object
+            .remember(_id)
+            .get(_id)
+            .clone(path)
     .obj
         # Every object in the MUD
         .__init__

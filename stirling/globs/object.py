@@ -1,3 +1,5 @@
+
+
 import logging
 logging.getLogger(__name__)
 logging.debug("Imported")
@@ -7,6 +9,20 @@ from pymongo.objectid import ObjectId
 from stirling.daemon.database.mongo import database
 
 objects = {}
+
+def get(_id):
+    pass
+    #if _id is in the database, load (if necessary) the object and return it
+
+def clone(path):
+    pass
+    # Create a new instance of module path and return it
+
+def search(path):
+    pass
+    # Return a list of all objects which match module path
+
+
 
 class NoSuchItemError(LookupError):
     pass

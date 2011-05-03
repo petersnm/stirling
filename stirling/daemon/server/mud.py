@@ -17,9 +17,9 @@ from stirling.obj.spec.player import Player
 from stirling.daemon.objects import load_object, get_object
 from world.dev.room.garden import Garden
 
-class StirlingServer(Daemon):
+class MUDServer(Daemon):
     def __init__(self, addr):
-        super(StirlingServer, self).__init__()
+        super(MUDServer, self).__init__()
         self.exclude += ['socket', 'connections', 'logging_in',
         'connections_player']
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -74,7 +74,7 @@ class StirlingServer(Daemon):
             self.handle()
 
 def runserver():
-    server = StirlingServer(('0.0.0.0', 5878))
+    server = MUDServer(('0.0.0.0', 5878))
     try:
         server.handle_forever()
     except KeyboardInterrupt:
