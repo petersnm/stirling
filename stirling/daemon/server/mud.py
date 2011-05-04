@@ -43,7 +43,7 @@ class MUDServer(Daemon):
                 # Connects are shown this first.
                 # TODO: Negotiate MCCP
                 # TODO: Negotiate MXP
-                new_conn.send(bytes('{0}\nv{1}\n    {2}\n\n{3}'.format(stirling.MUD_NAME, 
+                new_conn.send(bytes('{0}\nv{1}\n    {2}\n\n{3}\n'.format(stirling.MUD_NAME, 
                   stirling.MUD_VERSION, choice(stirling.MUD_SPLASH), stirling.MUD_GREET), 'ascii'))
                 self.info('New player connected.')
             elif conn in self.connections:
@@ -58,7 +58,10 @@ class MUDServer(Daemon):
                     if conn in self.logging_in:
                         # Outline the login process here!
                         # Fine if username exists/is valid: find_user(recv_data)
-                        # if find_user(ster_data).__class__ is 
+                        # if find_user(ster_data) is False:
+                        #   new_char(ster_data)
+                        # else:
+                        #   login_char(ster_data)
                         username=''.join(random.choice(string.ascii_lowercase) for x in range(8))
                         player = Player(conn)
                         player.name = username
