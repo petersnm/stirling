@@ -1,8 +1,4 @@
 """
-/lib/std/object.py
-abzde@Stirling
-280411 emsenn@Stirling
-
 The master object of the MUD, all objects inherit it at some point
 """
 
@@ -15,6 +11,8 @@ from stirling.daemon.database import database, Properties
 from stirling.daemon.objects import objects, clone, search, get
 
 class MasterObject(object):
+    '''MasterObject(object) is the base object, from which the majority of 
+    daemons and in-game objects are subclassed.'''
     def __init__(self, from_dict={}, from_db=False):
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 'warning',
                         'error',  'save', 'move', 'remove', 'add_inventory',
