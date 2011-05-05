@@ -1,4 +1,5 @@
-from stirling.daemon.objects import get
+import stirling
+
 
 def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
     '''
@@ -12,14 +13,15 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
     output = ''
     if target in ['room','here','environment']:
         if n is True:
-            output += '['+get(obj.environment).name+']\n'
-        output += get(obj.environment).desc+'\n'
+            output += '['+stirling.get(obj.environment).name+']\n'
+        output += stirling.get(obj.environment).desc+'\n'
     elif target in ['self','me',obj.name]:
         if n is True:
-            output += '['+get(obj).name+']\n'
+            output += '['+stirling.get(obj).name+']\n'
         output += obj.desc+'\n'
     else:
         for item in obj.environment.inventory+obj.inventory:
+            obj.debug(item.name)
             if target in item.nametags:
                 if n is True:
                     output += '['+item.name+']\n'
