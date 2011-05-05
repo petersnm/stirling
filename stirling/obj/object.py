@@ -80,6 +80,8 @@ class MasterObject(object):
             # keeping it here just in case someone does something silly.
             return self.__dict__[attr]
         else:
+            if attr == 'environment':
+                return stirling.get(self.__dict__['properties']['environment'])
             return self.__dict__['properties'][attr]
 
     def __delattr__(self, attr):
@@ -110,7 +112,7 @@ class MasterObject(object):
             return True
         elif isinstance(destination, ObjectId) == True:
             stirling.get(destination).add_inventory(self)
-            self.environment = destination
+            self.environment = destination._id
             return True
         else:
             return False

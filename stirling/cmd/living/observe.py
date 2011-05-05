@@ -12,9 +12,10 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
     obj.debug(obj.properties)
     output = ''
     if target in ['room','here','environment']:
+        viewed = obj.environment
         if n is True:
-            output += '['+stirling.get(obj.environment).name+']\n'
-        output += stirling.get(obj.environment).desc+'\n'
+            output += '['+viewed.name+']\n'
+        output += viewed.desc+'\n'
     elif target in ['self','me',obj.name]:
         if n is True:
             output += '['+stirling.get(obj).name+']\n'
