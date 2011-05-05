@@ -127,15 +127,6 @@ class MasterObject(object):
             self.properties['inventory'].append(item)
             return
     
-    def inventory(self, item=None):
-        if item == None:
-            return inventory
-        else:
-            if self.properties['inventory'].count(item) > 0:
-                return True
-            else:
-                return False
-    
 
     def tell(self, message):
         if isinstance(message, str):
