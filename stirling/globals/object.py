@@ -1,85 +1,65 @@
-
-
 import logging
 logging.getLogger(__name__)
 logging.debug("Imported")
 
 import sys
 from pymongo.objectid import ObjectId
-from stirling.daemon.database.mongo import database
+from stirling.daemon.database import MongoDB
 
 objects = {}
 
 def get(_id):
-    pass
-    #if _id is in the database, load (if necessary) the object and return it
-
-def clone(path):
-    pass
-    # Create a new instance of module path and return it
-
-def search(path):
-    pass
-    # Return a list of all objects which match module path
-
-
-
-class NoSuchItemError(LookupError):
-    pass
-
-def load_object(to_load, args=[]):
-    if isinstance(to_load, ObjectId):
-        objs = database.objects.find({'_module': _module, '_class': _class})
-        if objs.count() == 0:
-            logging.warning('load_objects recieved invalid ObjectId')
-            return False
-        elif objs.count() == 1:
-            obj_dict = objs[0]
-        else:
-            logging.warning('load_objects got multiple objects with that path')
-            return False
-        _module = obj_dict['_module']
-        _class = obj_dict['_class']
-        from_db = True
-    elif isinstance(to_load, str):
-        if '.' in to_load:
-            _module, _class = to_load.rsplit('.', 1)
-        else:
-            logging.warning('load_object recieved invalid path')
-            return False
-        objs = database.objects.find({'_module': _module, '_class': _class})
-        if objs.count() == 0:
-            obj_dict = {}
-            from_db = False
-        elif objs.count() == 1:
-            obj_dict = objs[0]
-            from_db=True
-        else:
-            logging.warning('load_objects got multiple objects with that path')
-            return False
-    else:
-        
-        logging.warning('load_object recieved invalid arg, expected type'
-                       'ObjectId or str')
-    try:
-        __import__(_module)
-        imported = sys.modules[_module]
-    except ImportError:
-        logging.warning('load_object tried to load invalid module')
-        return False
-    except:
-        pass
-    if hasattr(imported, _class):
-            obj = getattr(imported, _class)(from_dict=obj_dict, from_db=from_db)
-            objects[obj._id] = obj
-            return obj._id
-    else:
-        logging.warning('load_obj tried to load a nonexistent class')
-        return False
-        
-
-def get_object(_id):
     if _id in objects.keys():
         return objects[_id]
     else:
-        raise NoSuchItemError('no such item with id "%s"' % (_id,))
+        objs = MongoDB.objects.find({'_id': _id})
+        if objs.count() == 1:
+            objects[_id] = objs[0]
+            return objects[_id]
+        else:
+            return False
+
+def search(path):
+    if path.count('.') == 0:
+        return False
+    _module, _class = path.rsplit('.', 1)
+    objs = MongoDB.objects.find({'_module': _module, '_class': _class})
+    ret_list = []
+    if objs:
+        for obj in objs:
+            try:
+                __import__(obj._module)
+                mod = sys.modules[obj['_module']]
+            except:
+                # log it
+                continue
+            try:
+                obj = getattr(mod, obj['_class'])(from_dict =obj,
+                        from_db=True_)
+            except:
+                # log it
+                continue
+            objects[obj._id] = obj
+            ret_list.append(obj)
+        if ret_list: return obj
+    else:
+        return False
+
+def clone(path, *args, **kwargs):
+    if path.count('.') == 0:
+        return False
+    _module, _class = path.rsplit('.', 1)
+    try:
+        __import__(_module)
+        mod = sys.modules[_module]
+    except:
+        # log an error importing it
+        return False
+    try:
+        obj = getattr(mod, _class)(*args, **kwargs)
+    except:
+        # log teh error
+        return False
+    objects[obj._id] = obj
+    return obj
+

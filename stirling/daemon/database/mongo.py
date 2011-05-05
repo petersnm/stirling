@@ -10,5 +10,5 @@ from pymongo import Connection
 
 # needs moar config
 
-database = Connection().stirling
+MongoDB = Connection().stirling
 logger.debug('Database initialized')

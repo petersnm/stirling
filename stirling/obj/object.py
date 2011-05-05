@@ -7,8 +7,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 from pymongo.objectid import ObjectId
 
-from stirling.daemon.database import database, Properties
-from stirling.daemon.objects import objects, clone, search, get
+import stirling
+from stirling.daemon.database import MongoDB, Properties
 
 class MasterObject(object):
     '''MasterObject(object) is the base object, from which the majority of 
@@ -109,7 +109,7 @@ class MasterObject(object):
             self.environment = destination._id
             return True
         elif isinstance(destination, ObjectId) == True:
-            get(destination).add_inventory(self)
+            stirling.get(destination).add_inventory(self)
             self.environment = destination
             return True
         else:

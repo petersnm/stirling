@@ -1,4 +1,4 @@
-from stirling.daemon.database.mongo import database
+from stirling.daemon.database import MongoDB
 
 objects = {}
 
@@ -8,7 +8,7 @@ class Properties(dict):
         self.parent = parent
         # this is becasue if it's from the DB, we dont' need to fill the db, but if it isn't, we do.
         if not from_db:
-            self['_id'] = database.objects.insert(self)
+            self['_id'] = MongoDB.objects.insert(self)
             self.parent.__dict__['_id'] = self['_id']
             self['_class'] = self.parent.__class__.__name__
             self['_module'] = self.parent.__class__.__module__
@@ -21,15 +21,15 @@ class Properties(dict):
         except:
             pass
         dict.__setitem__(self, item, value)
-        database.objects.save(self)
+        MongoDB.objects.save(self)
 
     def __getitem__(self, item):
         return dict.__getitem__(self, item)
 
     def __delitem__(self, item):
         dict.__delitem__(item)
-        database.objects.save(self)
+        MongoDB.objects.save(self)
 
     def save(self):
-        database.objects.save(self)
+        MongoDB.objects.save(self)
 
