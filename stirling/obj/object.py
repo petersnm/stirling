@@ -5,9 +5,10 @@ The master object of the MUD, all objects inherit it at some point
 # This will have to be replaced by
 import logging
 logging.basicConfig(level=logging.DEBUG)
+from pymongo.objectid import ObjectId
 
 from stirling.daemon.database import database, Properties
-from stirling.daemon.objects import objects, load_object, get_object
+from stirling.daemon.objects import objects, clone, search, get
 
 class MasterObject(object):
     '''MasterObject(object) is the base object, from which the majority of 
@@ -103,10 +104,16 @@ class MasterObject(object):
     # Move and remove
     def move(self, destination):
         # move the object from one environment to another
-        if isinstance(get_object(destination), MasterObject) == True:
-            get_object(destination).add_inventory(self)
+        if isinstance(destination, MasterObject) == True:
+            destination.add_inventory(self)
+            self.environment = destination._id
+            return True
+        elif isinstance(destination, ObjectId) == True:
+            get(destination).add_inventory(self)
             self.environment = destination
-        return
+            return True
+        else:
+            return False
     
     def remove(self):
         # remove the object from the game
@@ -134,6 +141,7 @@ class MasterObject(object):
         if isinstance(message, str):
             pass
         pass
+
 
 class Inventory(list):
     def __init__(self, parent, _list=[], from_db=False):
