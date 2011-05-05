@@ -13,7 +13,7 @@ import stirling
 
 from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
-from stirling.daemon.objects import load_object, get_object
+from stirling.daemon.objects import clone, search, get
 
 class MUDServer(Daemon):
     '''MUDServer() is used to create a socket server capable of handling text 
@@ -66,9 +66,13 @@ class MUDServer(Daemon):
                         player = Player(conn)
                         player.name = username
                         self.connections_player[conn] = player
-                        foobar = load_object('world.testsuite.room.garden.Garden')
-                        self.debug(foobar)
-                        player.move(foobar)
+                        foobar = search('world.testsuite.room.garden.Garden')
+                        if foobar:
+                            room = foobar[0]
+                        else:
+                            room = clone('world.testsuite.room.garden.Garden')
+                        self.debug(room)
+                        player.move(room)
                         self.logging_in.remove(conn)
                         conn.send(b'You are now logged in, congrats.\n')
                         self.info('Player logged in as {0}'.format(username))
