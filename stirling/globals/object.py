@@ -27,20 +27,23 @@ def search(path):
     ret_list = []
     if objs:
         for obj in objs:
-            try:
-                __import__(obj['_module'])
-                mod = sys.modules[obj['_module']]
-            except:
-                logging.debug("failed to import '%s'" % (obj['_module'],))
-                continue
-            try:
-                obj = getattr(mod, obj['_class'])(from_dict=obj,
-                        from_db=True)
-            except:
-                logging.debug("failed to init '%s'" % (obj['_class'],))
-                continue
-            objects[obj._id] = obj
-            ret_list.append(obj)
+            if obj['_id'] in objects:
+                ret_list.append(objects[obj['_id']])
+            else:
+                try:
+                    __import__(obj['_module'])
+                    mod = sys.modules[obj['_module']]
+                except:
+                    logging.debug("failed to import '%s'" % (obj['_module'],))
+                    continue
+                try:
+                    obj = getattr(mod, obj['_class'])(from_dict=obj,
+                            from_db=True)
+                except:
+                    logging.debug("failed to init '%s'" % (obj['_class'],))
+                    continue
+                objects[obj._id] = obj
+                ret_list.append(obj)
         if ret_list: return ret_list
         else: return False
     else:
