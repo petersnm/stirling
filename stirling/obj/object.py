@@ -59,7 +59,6 @@ class MasterObject(object):
                         pass
                     self.add_nametag(value.lower())
                     self.properties['name'] = value
-                    self.debug('set name to '+value)
                 else:
                     self.warning('name setter passed incorrect type; expecting string')
             elif attr == 'nametags':
@@ -78,7 +77,6 @@ class MasterObject(object):
             return self.__dict__[attr]
         else:
             if attr == 'environment':
-                self.debug(stirling.get(self.__dict__['properties']['environment']))
                 return stirling.get(self.__dict__['properties']['environment'])
             return self.__dict__['properties'][attr]
 

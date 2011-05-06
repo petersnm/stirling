@@ -15,7 +15,7 @@ from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
 
 class MUDServer(Daemon):
-    '''MUDServer() is used to create a socket server capable of handling text 
+  '''MUDServer() is used to create a socket server capable of handling text 
     clients.  These clients are expected to be using, at most basic, netcat, 
     and on the more sophisticated end, clients like Mudlet and MUSHClient. 
     [server, mud server]'''
@@ -77,14 +77,11 @@ class MUDServer(Daemon):
                         player.name = username
                         self.connections_player[conn] = player
                         foobar = stirling.search('world.testsuite.room.garden.Garden')
-                        self.debug(foobar)
                         if foobar:
-                            self.debug("Room found!")
                             room = foobar[0]
                         else:
                             self.debug("Cloning in new room..")
                             room = stirling.clone('world.testsuite.room.garden.Garden')
-                        self.debug(room)
                         player.move(room)
                         self.logging_in.remove(conn)
                         conn.send(b'You are now logged in, congrats.\n')

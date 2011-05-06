@@ -9,7 +9,6 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
         anything in the calling object's inventory or environment
         -n sets whether to render the name or not
     '''
-    obj.debug(obj.properties)
     output = ''
     if target in ['room','here','environment']:
         viewed = obj.environment
@@ -22,7 +21,6 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
         output += obj.desc+'\n'
     else:
         for item in obj.environment.inventory+obj.inventory:
-            obj.debug(item.name)
             if target in item.nametags:
                 if n is True:
                     output += '['+item.name+']\n'
