@@ -16,8 +16,9 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
             output += '['+viewed.name+']\n'
         output += viewed.desc+'\n'
     elif target in ['self','me',obj.name]:
+        viewed = obj
         if n is True:
-            output += '['+stirling.get(obj).name+']\n'
+            output += '['+obj.name+']\n'
         output += obj.desc+'\n'
     else:
         for item in obj.environment.inventory+obj.inventory:

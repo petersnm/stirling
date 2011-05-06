@@ -159,7 +159,7 @@ class Nametags(list):
         if isinstance(item, str):
             try:
                 if self.properties['nametags'].count(tag) is 0:                
-                    list.append(item)
+                    list.append(self, item)
             except:
                 pass
         else:
