@@ -14,70 +14,25 @@ class MasterObject(object):
     '''MasterObject(object) is the base object, from which the majority of 
     daemons and in-game objects are subclassed.'''
     def __init__(self, from_dict={}, from_db=False):
-        self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 'warning',
-                        'error',  'save', 'move', 'remove', 'add_inventory',
-                        'tell',]
+        self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 
+          'warning', 'error',  'save', 'move', 'remove', 'add_inventory', 
+          'tell',]
         self.__dict__['properties'] = Properties(self, from_dict, from_db=from_db)
         # Initialize the object's logging
         self.logger = logging.getLogger(self.__module__)
         
 
     def new(self):
+        ''' Set the default properties of every object.'''
         self.name = 'an object'
         self.desc = 'this is a thing'
         self.inventory = []
-
-    # These need to be replaced once we have a logging daemon
-    def debug(self, message):
-        self.logger.debug(message)
-        return
-    def info(self, message):
-        self.logger.info(message)
-        return
-    def warning(self, message):
-        self.logger.warning(message)
-        self.tell('You have caused a minor error.  Please report:\n'+message)
-        return
-    def error(self, message):
-        self.logger.error(message)
-        self.tell('++ERROR++ Please report the following:\n'+message) 
-        return
-
-    @property
-    def name(self):
-        return self.properties['name']
-
-    @name.setter
-    def name(self, value):
-        if isinstance(value, str): 
-            try:
-                self.nametags.remove(self.properties['name'])
-            except:
-                pass
-            self.add_nametag(value.lower())
-            self.properties['name'] = value
-            self.debug('set name to '+value)
-        else:
-            self.warning('name setter passed incorrect type; expecting string')
-
 
     def __setattr__(self, attr, value):
         if attr in self.exclude:
             self.__dict__[attr] = value
         else:
-            # These are if checks to try and filter out special variables
-            # It should be rewritten to iterate through a list for special 
-            # variables and run their setters, so that things that inherit
-            # MasterObject can add in other special properties.
-            if attr == 'nametags':
-                if isinstance(value, list):
-                    for tag in value:
-                        self.add_nametag(tag)
-                else:
-                    self.warning('nametag setter passed incorrec type; expecting list')
-            else:
-                self.__dict__['properties'][attr] = value
-
+            self.__dict__['properties'][attr] = value
     def __getattr__(self, attr):
         if attr in self.exclude:
             # due to the way __getattr__ works, this should never be called,
@@ -99,6 +54,46 @@ class MasterObject(object):
 
     def save(self):
         self.properties.save()
+
+
+    # These need to be replaced once we have a logging daemon
+    def debug(self, message):
+        self.logger.debug(message)
+        return
+    def info(self, message):
+        self.logger.info(message)
+        return
+    def warning(self, message):
+        self.logger.warning(message)
+        self.tell('You have caused a minor error.  Please report:\n'+message)
+        return
+    def error(self, message):
+        self.logger.error(message)
+        self.tell('++ERROR++ Please report the following:\n'+message) 
+        return
+
+
+
+
+    @property
+    def name(self):
+        return self.properties['name']
+
+    @name.setter
+    def name(self, value):
+        if isinstance(value, str): 
+            try:
+                self.nametags.remove(self.properties['name'])
+            except:
+                pass
+            self.add_nametag(value.lower())
+            self.properties['name'] = value
+            self.debug('set name to '+value)
+        else:
+            self.warning('name setter passed incorrect type; expecting string')
+
+
+
 
     def add_nametag(self, tag):
         if isinstance(tag, str):

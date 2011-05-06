@@ -15,7 +15,7 @@ from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
 
 class MUDServer(Daemon):
-  '''MUDServer() is used to create a socket server capable of handling text 
+    '''MUDServer() is used to create a socket server capable of handling text 
     clients.  These clients are expected to be using, at most basic, netcat, 
     and on the more sophisticated end, clients like Mudlet and MUSHClient. 
     [server, mud server]'''
