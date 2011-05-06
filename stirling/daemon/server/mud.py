@@ -72,7 +72,8 @@ class MUDServer(Daemon):
                         #   login_char(ster_data)
                         username=''.join(random.choice(string.ascii_lowercase)
                           for x in range(8))
-                        player = Player(conn)
+                        player = stirling.clone('stirling.obj.spec.player.Player',
+                                conn)
                         player.name = username
                         self.connections_player[conn] = player
                         foobar = stirling.search('world.testsuite.room.garden.Garden')

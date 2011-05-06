@@ -10,9 +10,13 @@ from stirling.obj.object import MasterObject
 class Room(MasterObject):
     def __init__(self, **kw):
         super(Room, self).__init__(**kw)
+    
+    def new(self):
+        super(Room, self).new()
         self.name = 'room'
         self.lookables = {}
         self.exits = {}
+
     def write(self, data):
         """
         write(text)

@@ -10,8 +10,8 @@ demonstrates available room functions, nothing special.
 from stirling.obj.room import Room
 
 class Garden(Room):
-    def __init__(self, **kw):
-        super(Garden, self).__init__(**kw)
+    def new(self):
+        super(Garden, self).new()
         self.name = 'peaceful garden'
         self.desc = '''Enclosed by a tall wooden fence, this small grassy 
           garden seems very private.  There is a small stone bench nestled
