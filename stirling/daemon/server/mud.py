@@ -54,14 +54,23 @@ class MUDServer(Daemon):
             elif conn in self.connections:
                 # Sterilize input HERE
                 # SERIOUSLY.  THIS WHOLE SERVER CRASHING EVERY TIME SHIT GETS OLD
-                recv_data = conn.recv(1024)
+                recv_data = conn.recv(1024).decode(errors='replace')
                 # If we aren't getting any data, kick them out of the MUD.
                 if recv_data == '':
                     # Connection closed.
-                    conn.close()
                     self.info('Player {0} disconnected.'.format(
                       self.connections_player[conn].name))
                     self.connections.remove(conn)
+                    try:
+                        del self.connections_player[conn]
+                    except:
+                        pass
+                    try:
+                        self.logging_in.remove(conn)
+                    except:
+                        pass
+                    conn.close()
+                    del conn
                 else:
                     if conn in self.logging_in:
                         # Outline the login process here!
@@ -80,7 +89,6 @@ class MUDServer(Daemon):
                         if foobar:
                             room = foobar[0]
                         else:
-                            self.debug("Cloning in new room..")
                             room = stirling.clone('world.testsuite.room.garden.Garden')
                         player.move(room)
                         self.logging_in.remove(conn)
@@ -89,10 +97,9 @@ class MUDServer(Daemon):
                     else:
                         # If they've been logged in, pass the text to the player's
                         # object.
-                        decoded_data = recv_data.decode(errors='replace')
                         player = self.connections_player[conn]
-                        self.debug('Received data from {0}: {1}'.format(player.name, decoded_data))
-                        player.handle_data(decoded_data)
+                        self.debug('Received data from {0}: {1}'.format(player.name, recv_data))
+                        player.handle_data(recv_data)
     def handle_forever(self):
         while True:
             self.handle()
