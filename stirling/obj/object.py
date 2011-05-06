@@ -17,21 +17,15 @@ class MasterObject(object):
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 'warning',
                         'error',  'save', 'move', 'remove', 'add_inventory',
                         'tell',]
-        self.logger = logging.getLogger(self.__module__)
-        if from_dict:
-            self.debug('init from dict')
-            self.__dict__['properties'] = Properties(self, from_dict, from_db=from_db)
-        else:
-            self.debug('init without dict')
-            self.__dict__['properties'] = Properties(self, {
-                    'name': 'object',
-                    'nametags': ['object'],
-                    'desc': 'this is a thing.',
-                    'inventory': [],
-                    'environment': ''
-            }, from_db=from_db)
+        self.__dict__['properties'] = Properties(self, from_dict, from_db=from_db)
         # Initialize the object's logging
+        self.logger = logging.getLogger(self.__module__)
         
+
+    def new(self):
+        self.name = 'an object'
+        self.desc = 'this is a thing'
+        self.inventory = []
 
     # These need to be replaced once we have a logging daemon
     def debug(self, message):
@@ -71,7 +65,7 @@ class MasterObject(object):
             elif attr == 'nametags':
                 if isinstance(value, list):
                     for tag in value:
-                        add_nametag(tag)
+                        self.add_nametag(tag)
                 else:
                     self.warning('nametag setter passed incorrec type; expecting list')
             else:
@@ -102,8 +96,11 @@ class MasterObject(object):
 
     def add_nametag(self, tag):
         if isinstance(tag, str):
-            if self.properties['nametags'].count(tag) is 0:
-                self.properties['nametags'].append(tag)
+            try:
+                if self.properties['nametags'].count(tag) is 0:
+                    self.properties['nametags'].append(tag)
+            except KeyError:
+                self.properties['nametags'] = [tag]
         else:
             self.warning('add_nametag() was expecting string')
 

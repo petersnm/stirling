@@ -57,13 +57,14 @@ def clone(path, *args, **kwargs):
         __import__(_module)
         mod = sys.modules[_module]
     except:
-        # log an error importing it
+        logging.debug(sys.exc_info())
         return False
     try:
         obj = getattr(mod, _class)(*args, **kwargs)
     except:
-        # log teh error
+        logging.debug(sys.exc_info())
         return False
+    obj.new()
     objects[obj._id] = obj
     return obj
 
