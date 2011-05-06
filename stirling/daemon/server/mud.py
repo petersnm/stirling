@@ -76,9 +76,12 @@ class MUDServer(Daemon):
                         player.name = username
                         self.connections_player[conn] = player
                         foobar = stirling.search('world.testsuite.room.garden.Garden')
+                        self.debug(foobar)
                         if foobar:
+                            self.debug("Room found!")
                             room = foobar[0]
                         else:
+                            self.debug("Cloning in new room..")
                             room = stirling.clone('world.testsuite.room.garden.Garden')
                         self.debug(room)
                         player.move(room)

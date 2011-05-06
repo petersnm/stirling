@@ -1,4 +1,4 @@
-from stirling.globals.object import *
+from stirling.globals.object import get, search, clone
 
 MUD_NAME = "Stirling MUD"
 MUD_VERSION = "0.0.1"

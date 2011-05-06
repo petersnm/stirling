@@ -17,9 +17,12 @@ class MasterObject(object):
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 'warning',
                         'error',  'save', 'move', 'remove', 'add_inventory',
                         'tell',]
+        self.logger = logging.getLogger(self.__module__)
         if from_dict:
+            self.debug('init from dict')
             self.__dict__['properties'] = Properties(self, from_dict, from_db=from_db)
         else:
+            self.debug('init without dict')
             self.__dict__['properties'] = Properties(self, {
                     'name': 'object',
                     'nametags': ['object'],
@@ -28,7 +31,6 @@ class MasterObject(object):
                     'environment': ''
             }, from_db=from_db)
         # Initialize the object's logging
-        self.logger = logging.getLogger(self.__module__)
         
 
     # These need to be replaced once we have a logging daemon
@@ -57,17 +59,18 @@ class MasterObject(object):
             # MasterObject can add in other special properties.
             if attr == 'name':
                 if isinstance(value, str): 
-                    self.debug(self.nametags)
-                    self.debug(self.properties['name'])
-                    self.nametags.remove(self.properties['name'])
+                    try:
+                        self.nametags.remove(self.properties['name'])
+                    except:
+                        pass
                     self.add_nametag(value.lower())
                     self.properties['name'] = value
-                    self.debug("name set")
+                    self.debug('set name to '+value)
                 else:
                     self.warning('name setter passed incorrect type; expecting string')
             elif attr == 'nametags':
-                if isinstance(values, list):
-                    for tag in values:
+                if isinstance(value, list):
+                    for tag in value:
                         add_nametag(tag)
                 else:
                     self.warning('nametag setter passed incorrec type; expecting list')
@@ -81,6 +84,7 @@ class MasterObject(object):
             return self.__dict__[attr]
         else:
             if attr == 'environment':
+                self.debug(stirling.get(self.__dict__['properties']['environment']))
                 return stirling.get(self.__dict__['properties']['environment'])
             return self.__dict__['properties'][attr]
 
@@ -126,7 +130,7 @@ class MasterObject(object):
     # doing everything in memory via a database, this will change lots.  Oh boy!
     def add_inventory(self, item):
         if isinstance(item, MasterObject) == True:
-            self.properties['inventory'].append(item)
+            self.properties['inventory'].append(item._id)
             return
     
 
