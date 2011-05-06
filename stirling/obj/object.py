@@ -43,6 +43,24 @@ class MasterObject(object):
         self.tell('++ERROR++ Please report the following:\n'+message) 
         return
 
+    @property
+    def name(self):
+        return self.properties['name']
+
+    @name.setter
+    def name(self, value):
+        if isinstance(value, str): 
+            try:
+                self.nametags.remove(self.properties['name'])
+            except:
+                pass
+            self.add_nametag(value.lower())
+            self.properties['name'] = value
+            self.debug('set name to '+value)
+        else:
+            self.warning('name setter passed incorrect type; expecting string')
+
+
     def __setattr__(self, attr, value):
         if attr in self.exclude:
             self.__dict__[attr] = value
@@ -51,18 +69,7 @@ class MasterObject(object):
             # It should be rewritten to iterate through a list for special 
             # variables and run their setters, so that things that inherit
             # MasterObject can add in other special properties.
-            if attr == 'name':
-                if isinstance(value, str): 
-                    try:
-                        self.nametags.remove(self.properties['name'])
-                    except:
-                        pass
-                    self.add_nametag(value.lower())
-                    self.properties['name'] = value
-                    self.debug('set name to '+value)
-                else:
-                    self.warning('name setter passed incorrect type; expecting string')
-            elif attr == 'nametags':
+            if attr == 'nametags':
                 if isinstance(value, list):
                     for tag in value:
                         self.add_nametag(tag)
