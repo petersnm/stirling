@@ -15,7 +15,7 @@ from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
 
 class MUDServer(Daemon):
-  '''MUDServer() is used to create a socket server capable of handling text 
+    '''MUDServer() is used to create a socket server capable of handling text 
     clients.  These clients are expected to be using, at most basic, netcat, 
     and on the more sophisticated end, clients like Mudlet and MUSHClient. 
     [server, mud server]'''
@@ -57,9 +57,12 @@ class MUDServer(Daemon):
                 recv_data = conn.recv(1024).decode(errors='replace')
                 # If we aren't getting any data, kick them out of the MUD.
                 if recv_data == '':
-                    # Connection closed.
-                    self.info('Player {0} disconnected.'.format(
-                      self.connections_player[conn].name))
+                    # Connection closed].
+                    try:
+                        self.info('Player {0} disconnected.'.format(
+                                  self.connections_player[conn].name))
+                    except:
+                        self.info('Player disconnected, hadn\'t logged in.')
                     self.connections.remove(conn)
                     try:
                         del self.connections_player[conn]
