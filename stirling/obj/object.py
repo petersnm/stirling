@@ -69,6 +69,26 @@ class MasterObject(object):
             pass
         pass
 
+    # Move and remove
+    def move(self, destination):
+        # move the object from one environment to another
+        if isinstance(destination, MasterObject) == True:
+            destination.add_inventory(self)
+            self.environment = destination._id
+            return True
+        elif isinstance(destination, ObjectId) == True:
+            stirling.get(destination).add_inventory(self)
+            self.environment = destination._id
+            return True
+        else:
+            return False
+
+    def add_inventory(self, item):
+        if isinstance(item, MasterObject) == True:
+            self.properties['inventory'].append(item._id)
+            return
+    
+
 
     # These need to be replaced once we have a logging daemon
     def debug(self, message):
