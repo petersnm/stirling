@@ -45,11 +45,11 @@ class MUDServer(Daemon):
                 # Add them to the login queue.
                 self.logging_in.append(new_conn)
                 # Connects are shown this first.
-                splash = ('{0}\nv{1}\n    {2}\n\n{3}\n'.format(
+                splash = '{0}\nv{1}\n    {2}\n\n{3}\n'.format(
                   stirling.MUD_NAME,
                   stirling.MUD_VERSION, 
                   choice(stirling.MUD_SPLASH),
-                  stirling.MUD_GREET, 'ascii'))
+                  stirling.MUD_GREET)
                 new_conn.send(splash.encode())
             elif conn in self.connections:
                 # Sterilize input HERE
