@@ -57,9 +57,12 @@ class MUDServer(Daemon):
                 recv_data = conn.recv(1024).decode(errors='replace')
                 # If we aren't getting any data, kick them out of the MUD.
                 if recv_data == '':
-                    # Connection closed.
-                    self.info('Player {0} disconnected.'.format(
-                      self.connections_player[conn].name))
+                    # Connection closed].
+                    try:
+                        self.info('Player {0} disconnected.'.format(
+                                  self.connections_player[conn].name))
+                    except:
+                        self.info('Player disconnected, hadn\'t logged in.')
                     self.connections.remove(conn)
                     try:
                         del self.connections_player[conn]
