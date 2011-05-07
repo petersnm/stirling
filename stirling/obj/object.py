@@ -15,8 +15,7 @@ class MasterObject(object):
     daemons and in-game objects are subclassed. '''
     def __init__(self, from_dict={}, from_db=False):
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 
-          'warning', 'error',  'save', 'move', 'remove', 'add_inventory', 
-          'tell',]
+          'warning', 'error',  'save', 'move', 'remove', 'tell',]
         self.__dict__['properties'] = Properties(self, 
           from_dict, from_db=from_db)
         # Initialize the object's logging
@@ -28,7 +27,7 @@ class MasterObject(object):
         self.name = str(self._id)
         self.desc = 'this is a thing'
         self.nametags = Nametags(['object','thing'])
-        self.inventory = []
+        self.inventory = Inventory(self)
 
     def save(self):
         ''' Force a save of the object. '''
@@ -69,25 +68,20 @@ class MasterObject(object):
             pass
         pass
 
+
     # Move and remove
     def move(self, destination):
         # move the object from one environment to another
         if isinstance(destination, MasterObject) == True:
-            destination.add_inventory(self)
+            destination.inventory.append(self._id)
             self.environment = destination._id
             return True
         elif isinstance(destination, ObjectId) == True:
-            stirling.get(destination).add_inventory(self)
+            stirling.get(destination).inventory.append(self._id)
             self.environment = destination._id
             return True
         else:
             return False
-
-    def add_inventory(self, item):
-        if isinstance(item, MasterObject) == True:
-            self.properties['inventory'].append(item._id)
-            return
-    
 
 
     # These need to be replaced once we have a logging daemon
@@ -171,8 +165,16 @@ class Inventory(list):
     def __init__(self, parent, _list=[], from_db=False):
         list.__init__(self, _list)
         self.parent = parent
-        
 
+    def contents(self):
+        '''foo = []
+        self.parent.debug(self)
+        for item in self:
+            self.parent.debug(item)
+            foo.append(item)
+        self.parent.debug(foo)'''
+        return self
+ 
     def search(self, nametag):
         L = []
         for obj_id in self:
