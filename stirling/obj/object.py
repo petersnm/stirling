@@ -167,13 +167,10 @@ class Inventory(list):
         self.parent = parent
 
     def contents(self):
-        '''foo = []
-        self.parent.debug(self)
+        foo = []
         for item in self:
-            self.parent.debug(item)
-            foo.append(item)
-        self.parent.debug(foo)'''
-        return self
+            foo.append(stirling.get(item))
+        return foo
  
     def search(self, nametag):
         L = []
