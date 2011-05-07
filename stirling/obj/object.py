@@ -77,10 +77,14 @@ class MasterObject(object):
         if isinstance(destination, MasterObject) == True:
             destination.inventory.append(self._id)
             self.environment = destination._id
+            destination.save()
+            self.save()
             return True
         elif isinstance(destination, ObjectId) == True:
             stirling.get(destination).inventory.append(self._id)
             self.environment = destination._id
+            destination.save()
+            self.save()
             return True
         else:
             return False
