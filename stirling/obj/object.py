@@ -6,9 +6,11 @@ The master object of the MUD, all objects inherit it at some point
 import logging
 logging.basicConfig(level=logging.DEBUG)
 from pymongo.objectid import ObjectId
+import sys
 
 import stirling
-from stirling.daemon.database import MongoDB, Properties
+from stirling.daemon.database import MongoDB
+from stirling.globals.object import objects
 
 class MasterObject(object):
     '''MasterObject(object) is the base object, from which the majority of 
@@ -26,7 +28,7 @@ class MasterObject(object):
         ''' Set the default properties of every object. '''
         self.name = str(self._id)
         self.desc = 'this is a thing'
-        self.nametags = Nametags(['object','thing'])
+        self.nametags = NameTags(['object','thing'])
         self.inventory = Inventory(self)
 
     def save(self):
@@ -145,7 +147,7 @@ class MasterObject(object):
     #        self.warning('add_nametag() was expecting string')
 
 
-class Nametags(list):
+class NameTags(list):
     def __init__(self, obj, _list=[]):
         list.__init__(self, _list)
 
@@ -179,3 +181,46 @@ class Inventory(list):
             if nametag in obj.nametags:
                 L.append(obj_id)
         return L
+
+class Properties(dict):
+    def __init__(self, parent, from_dict={}, from_db=False):
+        dict.__init__(self, from_dict)
+        # this is becasue if it's from the DB, we dont' need to fill the db, but if it isn't, we do.
+        if not from_db:
+            self['special'] = {
+                    'inventory': 'Inventory',
+                    'nametags': 'NameTags',
+            }
+            self['_id'] = MongoDB.objects.insert(self)
+            parent.__dict__['_id'] = self['_id']
+            self['_class'] = parent.__class__.__name__
+            self['_module'] = parent.__class__.__module__
+            objects[self['_id']] = parent
+        try:
+            for key, cls in self['special'].items():
+                if key in self and not isinstance(self[key], globals()[cls]):
+                    self[key] = globals()[cls](self[key])
+        except:
+            parent.debug(sys.exc_info())
+
+    def __setitem__(self, item, value):
+        wat = dict.__setitem__(self, item, value)
+        try:
+            MongoDB.objects.save(self)
+        except Exception:
+            logging.debug(sys.exc_info())
+        return wat
+
+    def __getitem__(self, item):
+        return dict.__getitem__(self, item)
+
+    def __delitem__(self, item):
+        wat = dict.__delitem__(item)
+        MongoDB.objects.save(self)
+        return wat
+
+    def save(self):
+        MongoDB.objects.save(self)
+
+
+

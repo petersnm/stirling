@@ -41,6 +41,7 @@ def search(path):
                             from_db=True)
                 except:
                     log.debug("failed to init '%s'" % (obj['_class'],))
+                    log.debug(sys.exc_info())
                     continue
                 objects[obj._id] = obj
                 ret_list.append(obj)

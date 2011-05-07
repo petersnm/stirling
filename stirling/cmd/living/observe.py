@@ -16,7 +16,7 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
             output += '['+viewed.name+']\n'
         output += viewed.desc+'\n'
         output += '('
-        for item in viewed.inventory.contents:
+        for item in viewed.inventory.contents():
             output += item.name+', '
         output += ')\n'
     elif target in ['self','me',obj.name]:
