@@ -1,6 +1,6 @@
 import logging
-logging.getLogger(__name__)
-logging.debug("Imported")
+log = logging.getLogger(__name__)
+log.debug("Imported")
 
 import sys
 from pymongo.objectid import ObjectId
@@ -34,13 +34,13 @@ def search(path):
                     __import__(obj['_module'])
                     mod = sys.modules[obj['_module']]
                 except:
-                    logging.debug("failed to import '%s'" % (obj['_module'],))
+                    log.debug("failed to import '%s'" % (obj['_module'],))
                     continue
                 try:
                     obj = getattr(mod, obj['_class'])(from_dict=obj,
                             from_db=True)
                 except:
-                    logging.debug("failed to init '%s'" % (obj['_class'],))
+                    log.debug("failed to init '%s'" % (obj['_class'],))
                     continue
                 objects[obj._id] = obj
                 ret_list.append(obj)
@@ -57,12 +57,12 @@ def clone(path, *args, **kwargs):
         __import__(_module)
         mod = sys.modules[_module]
     except:
-        logging.debug(sys.exc_info())
+        log.debug(sys.exc_info())
         return False
     try:
         obj = getattr(mod, _class)(*args, **kwargs)
     except:
-        logging.debug(sys.exc_info())
+        log.debug(sys.exc_info())
         return False
     obj.new()
     objects[obj._id] = obj
