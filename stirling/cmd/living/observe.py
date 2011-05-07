@@ -15,6 +15,13 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
         if n is True:
             output += '['+viewed.name+']\n'
         output += viewed.desc+'\n'
+        output += '('
+        obj.debug(viewed.inventory)
+        obj.debug(viewed.inventory[0])
+        '''for item in viewed.inventory:
+            obj.debug(item)
+            output += item.name+', '
+        output += ')'''
     elif target in ['self','me',obj.name]:
         viewed = obj
         if n is True:

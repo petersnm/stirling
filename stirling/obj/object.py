@@ -172,6 +172,7 @@ class Inventory(list):
         list.__init__(self, _list)
         self.parent = parent
         
+
     def search(self, nametag):
         L = []
         for obj_id in self:
