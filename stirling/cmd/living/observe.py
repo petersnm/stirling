@@ -1,4 +1,5 @@
 import stirling
+import sys
 
 
 def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
@@ -17,7 +18,11 @@ def do_observe(obj, target='here', v=False, t=False, s=False, n=False):
         output += viewed.desc+'\n'
         output += '('
         for item in viewed.inventory.contents():
-            output += item.name+', '
+            try:
+                output += item.name+', '
+            except:
+                # temp fix until players despawn and shit in a sane way.
+                pass
         output += ')\n'
     elif target in ['self','me',obj.name]:
         viewed = obj
