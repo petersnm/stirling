@@ -1,22 +1,31 @@
 import sys
-
+import stirling
 from stirling.cmd import find_cmd
 
-def do_help(obj, cmd_name=None):
+def do_help(origin, cmd_name=None):
     '''
-    usage: help [command]
-        returns command specific help or this help message
+    usage: help [target]
+        Target can be either a command or 'here' or 'environment'
     '''
-    if cmd_name:
-        cmd = find_cmd(cmd_name, obj.cmd_modules)
-        try:
-            doc = getattr(cmd, 'do_%s' % (cmd_name,)).__doc__
-        except:
-            doc = 'No help for this command.\n'
-        obj.tell(trim(doc))
-    else:
-        obj.tell('This is stirling mud. Try `help <command name>` for help ' +
-                 'on specific commands\n')
+    try:
+        if cmd_name:
+            if cmd_name is in ['room','environment','here']:
+                try:
+                    origin.tell(trim(origin.environment.__doc__))
+                except:
+                    origin.tell('No help for this environment')
+                    return
+            else:
+                cmd = find_cmd(cmd_name, origin.cmd_modules)
+                try:
+                    origin.tell(getattr(cmd, 'do_%s' % (cmd_name,)).__doc__)
+                except:
+                    origin.tell('No help for this command.\n')
+                    return
+        else:
+            origin.tell(trim(__doc__))
+    except:
+        origin.debug(sys.exc_info())
 
 def trim(docstring):
     if not docstring:
