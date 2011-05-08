@@ -88,11 +88,11 @@ class MUDServer(Daemon):
                                 conn)
                         player.name = username
                         self.connections_player[conn] = player
-                        foobar = stirling.search('world.testsuite.room.garden.Garden')
+                        foobar = stirling.search('world.test.room.garden.Garden')
                         if foobar:
                             room = foobar[0]
                         else:
-                            room = stirling.clone('world.testsuite.room.garden.Garden')
+                            room = stirling.clone('world.test.room.garden.Garden')
                         player.move(room)
                         self.logging_in.remove(conn)
                         conn.send(b'You are now logged in, congrats.\n')
