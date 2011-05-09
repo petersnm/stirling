@@ -18,17 +18,17 @@ class MasterObject(object):
     def __init__(self, from_dict={}, from_db=False):
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 
           'warning', 'error',  'save', 'move', 'remove', 'tell',]
+        self.logger = logging.getLogger(self.__module__)
         self.__dict__['properties'] = Properties(self, 
           from_dict, from_db=from_db)
         # Initialize the object's logging
-        self.logger = logging.getLogger(self.__module__)
         
 
     def new(self):
         ''' Set the default properties of every object. '''
         self.name = str(self._id)
         self.desc = 'this is a thing'
-        self.nametags = NameTags(['object','thing'])
+        self.nametags = NameTags(self, ['object','thing'])
         self.inventory = Inventory(self)
 
     def save(self):
@@ -39,7 +39,7 @@ class MasterObject(object):
     def __setattr__(self, attr, value):
         ''' Unless specifically exempted, adds attr to the properties dict 
         with a value of value. '''
-        if attr in self.exclude:
+        if attr in self.exclude or attr in self.__dict__:
             self.__dict__[attr] = value
         else:
             self.__dict__['properties'][attr] = value
@@ -116,6 +116,7 @@ class MasterObject(object):
         ''' When an object's name is changed, it should also remove the 
         previous name from the nametags, and replace it with the new 
         one. '''
+        self.debug('set name to '+value)
         if isinstance(value, str): 
             try:
                 self.nametags.remove(self.properties['name'])
@@ -123,7 +124,6 @@ class MasterObject(object):
                 pass
             self.nametags.append(value.lower())
             self.properties['name'] = value
-            self.debug('set name to '+value)
         else:
             self.warning('name setter passed incorrect type; expecting string')
 
@@ -148,23 +148,46 @@ class MasterObject(object):
     #        self.warning('add_nametag() was expecting string')
 
 
-class NameTags(list):
-    def __init__(self, obj, _list=[]):
+class AutoSaveList(list):
+    def __init__(self, parent, _list=[]):
         list.__init__(self, _list)
+        self.parent = parent
+
+    def append(self, item):
+        x = list.append(self, item)
+        self.parent.save()
+        return x
+
+    def remove(self, item):
+        x = list.remove(self, item)
+        self.parent.save()
+        return x
+
+    def insert(self, index, item):
+        x = list.insert(self, index, item)
+        self.parent.save()
+        return x 
+
+    def pop(self, index=-1):
+        x = list.pop(self, index)
+        self.parent.save()
+        return x
+
+class NameTags(AutoSaveList):
+    def __init__(self, parent, _list=[]):
+        list.__init__(self, _list)
+        self.parent = parent
 
     def append(self, item):
         if isinstance(item, str):
             try:
-                if self.properties['nametags'].count(tag) is 0:                
-                    list.append(self, item)
+                if self.parent.properties['nametags'].count(tag) is 0:                
+                    AutoSaveList.append(self, item)
             except:
                 pass
-        else:
-            pass
-    
 
 
-class Inventory(list):
+class Inventory(AutoSaveList):
     def __init__(self, parent, _list=[], from_db=False):
         list.__init__(self, _list)
         self.parent = parent
@@ -200,7 +223,8 @@ class Properties(dict):
         try:
             for key, cls in self['special'].items():
                 if key in self and not isinstance(self[key], globals()[cls]):
-                    self[key] = globals()[cls](self[key])
+                    self[key] = globals()[cls](parent, self[key])
+                    parent.debug((parent, self[key]))
         except:
             parent.debug(sys.exc_info())
 
