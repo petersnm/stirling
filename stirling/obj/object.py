@@ -86,6 +86,8 @@ class MasterObject(object):
         else:
             return False
 
+    def remove(self):
+        del self.environment.inventory[self._id]
 
     # These need to be replaced once we have a logging daemon
     def debug(self, message):

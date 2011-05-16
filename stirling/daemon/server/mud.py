@@ -61,6 +61,10 @@ class MUDServer(Daemon):
                     try:
                         self.info('Player {0} disconnected.'.format(
                                   self.connections_player[conn].name))
+                        try:
+                            self.connections_player[conn].remove()
+                        except:
+                            self.info('moose!')
                     except:
                         self.info('Player disconnected, hadn\'t logged in.')
                     self.connections.remove(conn)
