@@ -87,7 +87,11 @@ class MasterObject(object):
             return False
 
     def remove(self):
-        del self.environment.inventory[self._id]
+        self.environment.inventory.remove(self._id)
+
+    def destroy(self):
+        self.remove()
+        MongoDB.objects.remove(self._id)
 
     # These need to be replaced once we have a logging daemon
     def debug(self, message):
