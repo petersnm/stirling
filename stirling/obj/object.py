@@ -87,10 +87,12 @@ class MasterObject(object):
         # move the object from one environment to another
         if isinstance(destination, MasterObject) == True:
             destination.inventory.append(self._id)
+            self.remove()
             self.environment = destination._id
             return True
         elif isinstance(destination, ObjectId) == True:
             stirling.get(destination).inventory.append(self._id)
+            self.remove()
             self.environment = destination._id
             return True
         else:
