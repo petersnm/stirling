@@ -87,7 +87,10 @@ class MasterObject(object):
             return False
 
     def remove(self):
-        self.environment.inventory.remove(self._id)
+        try:
+            self.environment.inventory.remove(self._id)
+        except:
+            pass
 
     def destroy(self):
         self.remove()

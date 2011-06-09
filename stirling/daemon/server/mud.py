@@ -59,6 +59,10 @@ class MUDServer(Daemon):
                 if recv_data == '':
                     # Connection closed].
                     try:
+                        self.connections_player[conn].remove()
+                    except:
+                        pass
+                    try:
                         self.info('Player {0} disconnected.'.format(
                                   self.connections_player[conn].name))
                         try:
@@ -118,6 +122,7 @@ def runserver():
     except KeyboardInterrupt:
         server.info('Received ^C, closing down')
         for c in server.connections:
+            server.connections_player[c].remove()
             c.close()
         server.socket.close()
         server.info('Sockets closed, goodbye')
