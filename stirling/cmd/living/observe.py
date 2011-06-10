@@ -15,22 +15,25 @@ def do_observe(origin, target='here', n=False, match=1):
     # These if checks determine if the player is using one of several 
     # predefined keywords.  I imagine as things get more sophisticated, this 
     # will be replaced by a search/replace of player-set nicknames.
-    if target is 'here':
+    if target == 'here':
         observed = origin.environment
-    elif target is 'me':
+    elif target == 'me':
         observed = origin
     else:
         matches = []
         try:
             for item in origin.inventory.contents():
                 if target in item.nametags:
-                    matches += item
+                    matches += [item]
         except:
             pass
         try:
             for item in origin.environment.inventory.contents():
+                origin.debug(item.nametags)
+                origin.debug(target)
+                origin.debug(target in item.nametags)
                 if target in item.nametags:
-                    matches += item
+                    matches += [item]
         except:
             pass
         origin.debug(matches)

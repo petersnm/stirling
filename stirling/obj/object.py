@@ -17,7 +17,9 @@ class MasterObject(object):
     daemons and in-game objects are subclassed. '''
     def __init__(self, from_dict={}, from_db=False):
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info', 
-          'warning', 'error',  'save', 'move', 'remove', 'tell',]
+          'warning', 'error',  'save', 'move', 'remove', 'tell',
+          '_get_environment', '_set_name']
+        self.__dict__['customs'] = ['name']
         self.logger = logging.getLogger(self.__module__)
         self.__dict__['properties'] = Properties(self, 
           from_dict, from_db=from_db)
@@ -26,9 +28,9 @@ class MasterObject(object):
 
     def new(self):
         ''' Set the default properties of every object. '''
+        self.nametags = NameTags(self, ['object','thing'])
         self.name = str(self._id)
         self.desc = 'this is a thing'
-        self.nametags = NameTags(self, ['object','thing'])
         self.inventory = Inventory(self)
 
     def save(self):
@@ -39,7 +41,10 @@ class MasterObject(object):
     def __setattr__(self, attr, value):
         ''' Unless specifically exempted, adds attr to the properties dict 
         with a value of value. '''
-        if attr in self.exclude or attr in self.__dict__:
+        if "_set_%s" % (attr,) in dir(self):
+            print("tryna call _set_")
+            return object.__getattribute__(self, "_set_%s" % (attr,))(value)
+        elif attr in self.exclude or attr in self.__dict__:
             self.__dict__[attr] = value
         else:
             self.__dict__['properties'][attr] = value
@@ -48,7 +53,10 @@ class MasterObject(object):
     def __getattr__(self, attr):
         ''' Unless attr is in self.exclude, query the properties doct for it 
         and return its' value. '''
-        if attr in self.exclude:
+        if not (attr.startswith('_get_') or attr.startswith('_set_')) and\
+           '_get_%s' % (attr,) in dir(self):
+            return object.__getattribute__(self, '_get_%s' % (attr,))() 
+        elif attr in self.exclude:
             # due to the way __getattr__ works, this should never be called,
             # keeping it here just in case someone does something silly.
             return self.__dict__[attr]
@@ -57,7 +65,9 @@ class MasterObject(object):
 
     def __delattr__(self, attr):
         ''' Remove the attribute. '''
-        if attr in self.exclude:
+        if hasattr(self, "_del_%s" % (attr,)) and not attr.startswith('_del_'):
+            return getattr(self, "_del_%s" % (attr,))
+        elif attr in self.exclude:
             # why are you deleting something that's in .exclude, they're mostly
             # core functions. do we want to disallow this?
             # yes -- emsenn
@@ -115,15 +125,7 @@ class MasterObject(object):
         return
 
 
-    @property
-    def name(self):
-        ''' An object's name is its proper name.  For example, a sailor named 
-        Pete might have a name of 'Salty Pete', or a baker might have a name 
-        of 'skilled baker'. '''
-        return self.properties['name']
-
-    @name.setter
-    def name(self, value):
+    def _set_name(self, value):
         ''' When an object's name is changed, it should also remove the 
         previous name from the nametags, and replace it with the new 
         one. '''
@@ -132,31 +134,16 @@ class MasterObject(object):
             try:
                 self.nametags.remove(self.properties['name'])
             except:
-                pass
-            self.nametags.append(value.lower())
+                self.debug(sys.exc_info())
+            self.nametags += [value.lower()]
             self.properties['name'] = value
         else:
             self.warning('name setter passed incorrect type; expecting string')
 
-    @property
-    def environment(self):
+    def _get_environment(self):
         ''' The environment is stored as an _id, so we have to use 
         stirling.get() to retrieve the object referred to. '''
         return stirling.get(self.__dict__['properties']['environment'])
-
-    @property
-    def nametags(self):
-        return self.properties['nametags']
-
-    #def add_nametag(self, tag):
-    #    if isinstance(tag, str):
-    #        try:
-    #            if self.properties['nametags'].count(tag) is 0:
-    #                self.properties['nametags'].append(tag)
-    #        except KeyError:
-    #            self.properties['nametags'] = [tag]
-    #    else:
-    #        self.warning('add_nametag() was expecting string')
 
 
 class AutoSaveList(list):
@@ -165,9 +152,11 @@ class AutoSaveList(list):
         self.parent = parent
 
     def append(self, item):
-        x = list.append(self, item)
+        self.parent.debug(self)
+        self += [item]
+        self.parent.debug(self)
         self.parent.save()
-        return x
+        self.parent.debug(self)
 
     def remove(self, item):
         x = list.remove(self, item)
