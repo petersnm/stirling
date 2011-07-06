@@ -16,6 +16,7 @@ class Living(MasterObject):
         super(Living, self).__init__(**kw)
         self.exclude += ['parse_lines']
         self.cmd_modules = ['cmd.living']
+        self.aliases = []
 
     def parse_line(self, line):
         cmd = False
@@ -55,7 +56,7 @@ class Living(MasterObject):
                             substr += ' ' + arg
                     else:
                         if arg.startswith('--'):
-                            name, value = arg[2:].split('=')
+                            name, value = arg[2:].split('=',1)
                             kwargs[name] = value
                             if value.startswith('"'):
                                 if value.endswith('"'):

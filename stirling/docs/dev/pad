@@ -1,0 +1,10 @@
+/obj/object.py:
+    New setattr that can handle subclasses setting special attributes
+/daemon/server/mud.py
+    MCCP negotiating/encoding/decoding
+    input sterilization
+    login stuff (requires player database records)
+/daemon/database/mongo
+    capitalize database
+/daemon/database/logs
+/daemon/database/players

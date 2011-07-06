@@ -1,25 +1,27 @@
 """
-/lib/server/server.py
-abzde@Stirling
-280411 emsenn@Stirling
-
-The main socket server of Stirling.  Really overly simple at the moment, 
-but as we're just getting started, not too set on what we need.
+The main server of the MUD, this file handles the socket server and its clients.  
+This most likely needs to be expanded to handle telnet command characters, MCCP, and
+MXP.
 """
 
 import socket
 import select
 import random
 import string
+from random import choice
+import stirling
 
 from stirling.obj.spec.daemon import Daemon
 from stirling.obj.spec.player import Player
-from stirling.daemon.objects import load_object, get_object
-from world.dev.room.garden import Garden
 
 class MUDServer(Daemon):
-    def __init__(self, addr):
-        super(MUDServer, self).__init__()
+    '''MUDServer() is used to create a socket server capable of handling text 
+    clients.  These clients are expected to be using, at most basic, netcat, 
+    and on the more sophisticated end, clients like Mudlet and MUSHClient. 
+    [server, mud server]'''
+    def __init__(self, addr, **kw):
+        '''Create the socket server and listen for new connections.'''
+        super(MUDServer, self).__init__(**kw)
         self.exclude += ['socket', 'connections', 'logging_in',
         'connections_player']
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,44 +33,84 @@ class MUDServer(Daemon):
         self.connections_player = {} #{connection: player} mapping
 
     def handle(self):
+        '''All text input from a connection gets sent here'''
         # Could someone explain what these are for? -- emsenn
         r, w, e = select.select([self.socket] + self.connections, [], [], 5)
         for conn in r:
+            # If the connection is in the socket's list still, they've just 
+            # arrived and need to be started down the login process.
             if conn is self.socket:
                 (new_conn, addr) = conn.accept()
                 self.connections.append(new_conn)
                 # Add them to the login queue.
                 self.logging_in.append(new_conn)
                 # Connects are shown this first.
-                new_conn.send(b'Welcome to the Stirling Engine.  Please hit enter.\n')
-                self.info('New player connected.')
+                splash = '{0}\nv{1}\n    {2}\n\n{3}\n'.format(
+                  stirling.MUD_NAME,
+                  stirling.MUD_VERSION, 
+                  choice(stirling.MUD_SPLASH),
+                  stirling.MUD_GREET)
+                new_conn.send(splash.encode())
             elif conn in self.connections:
-                recv_data = conn.recv(1024)
+                # Sterilize input HERE
+                # SERIOUSLY.  THIS WHOLE SERVER CRASHING EVERY TIME SHIT GETS OLD
+                recv_data = conn.recv(1024).decode(errors='replace')
+                # If we aren't getting any data, kick them out of the MUD.
                 if recv_data == '':
-                    # Connection closed.
-                    conn.close()
-                    self.info('Player {0} disconnected.'.format(self.connections_player[conn].name))
+                    # Connection closed].
+                    try:
+                        self.connections_player[conn].remove()
+                    except:
+                        pass
+                    try:
+                        self.info('Player {0} disconnected.'.format(
+                                  self.connections_player[conn].name))
+                        try:
+                            self.connections_player[conn].remove()
+                        except:
+                            self.info('moose!')
+                    except:
+                        self.info('Player disconnected, hadn\'t logged in.')
                     self.connections.remove(conn)
+                    try:
+                        del self.connections_player[conn]
+                    except:
+                        pass
+                    try:
+                        self.logging_in.remove(conn)
+                    except:
+                        pass
+                    conn.close()
+                    del conn
                 else:
                     if conn in self.logging_in:
                         # Outline the login process here!
-                        username=''.join(random.choice(string.ascii_lowercase) for x in range(8))
-                        player = Player(conn)
+                        # Fine if username exists/is valid: find_user(recv_data)
+                        # if find_user(ster_data) is False:
+                        #   new_char(ster_data)
+                        # else:
+                        #   login_char(ster_data)
+                        username=''.join(random.choice(string.ascii_lowercase)
+                          for x in range(8))
+                        player = stirling.clone('stirling.obj.spec.player.Player',
+                                conn)
                         player.name = username
                         self.connections_player[conn] = player
-                        foobar = load_object('world.dev.room.garden.Garden')
-                        self.debug(foobar)
-                        player.move(foobar)
+                        foobar = stirling.search('world.test.room.garden.Garden')
+                        if foobar:
+                            room = foobar[0]
+                        else:
+                            room = stirling.clone('world.test.room.garden.Garden')
+                        player.move(room)
                         self.logging_in.remove(conn)
                         conn.send(b'You are now logged in, congrats.\n')
                         self.info('Player logged in as {0}'.format(username))
                     else:
                         # If they've been logged in, pass the text to the player's
                         # object.
-                        decoded_data = recv_data.decode(errors='replace')
                         player = self.connections_player[conn]
-                        self.debug('Received data from {0}: {1}'.format(player.name, decoded_data))
-                        player.handle_data(decoded_data)
+                        self.debug('Received data from {0}: {1}'.format(player.name, recv_data))
+                        player.handle_data(recv_data)
     def handle_forever(self):
         while True:
             self.handle()
@@ -80,6 +122,7 @@ def runserver():
     except KeyboardInterrupt:
         server.info('Received ^C, closing down')
         for c in server.connections:
+            server.connections_player[c].remove()
             c.close()
         server.socket.close()
         server.info('Sockets closed, goodbye')

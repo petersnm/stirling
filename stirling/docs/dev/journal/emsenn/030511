@@ -1,0 +1,46 @@
+How do you help people roleplay in your MUD in a way that makes it open enough 
+for players to truly be the character they want to be, yet still keeps things 
+predictable enough for creators.  I spent some time this week interviewing a 
+few of my favorite MUDders, trying to get a feel for what exactly they seem 
+to expect out of their MUD, to help them get by.
+
+
+CULTURE
+Culture is a big thing.  If there is no compelling reason for the player to 
+roleplay in YOUR universe, they'll go someplace that is more appealing.  
+This doesn't necessarily mean that if a player is into science fiction and 
+you're writing a fantasy MUD you lose them as a player.  People seemed to 
+care much more about depth than content.  A few things MUDding roleplayers 
+seemed care a lot about is making their character fit in the MUD world as a 
+whole.  Often players are anomalously super-powered compared to the NPCs in 
+the world, and appear on the face of the planet with no back story, no 
+family, friends, residence, history, or any of that.  Write your world so 
+that players can fill niches in the environment.
+
+
+SOULS
+Souls are an old term from LPC MUDs, and basically refer to the action commands 
+a player might use to represent their physical precense in the MUD.  Smile, 
+nod, frown, clap, and grimace are all examples of what souls might be.  
+They're intended to help players interact with each other more naturally, by 
+providing a relatively standard syntax and output
+    nod jim
+    You nod at Salty Jim.
+    [Salty Jim sees: emsenn nods at you.]
+However, in asking around, I was relatively stunned to see that a large number 
+of roleplayers don't use souls at *all*.  Rather than use the action commands 
+provided to them through the game, they prefer to emote things in a more literal 
+method, with the emote command.
+    emote nods at Jim.
+    emsenn nods at Jim.
+    [Salty Jim sees: emsenn nods at Jim.]
+Obviously this method is less than ideal, so should emphasize the importance of 
+writing consistent, simple, and logical souls.
+
+
+ENVIRONMENT
+If you want to encourage people to hang out, provide fun places to do so!  A 
+pleasant bar, a theater where players can go on stage and perform, a nice place 
+to grab a bite to eat, whatever fits your game world.  Provide a hub of where 
+social activity gets started, and you will greatly help expand the ability for 
+roleplayers to dive into the crowd and start playing their role.
