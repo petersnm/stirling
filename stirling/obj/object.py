@@ -10,7 +10,8 @@ import sys
 
 import stirling
 from stirling.daemon.database import MongoDB
-from stirling.globals.object import objects
+from stirling.globals.obj import objects
+from stirling.globals.datatypes import PersistList, PersistDict
 
 class MasterObject(object):
     '''MasterObject(object) is the base object, from which the majority of 
@@ -173,7 +174,7 @@ class AutoSaveList(list):
         self.parent.save()
         return x
 
-class NameTags(AutoSaveList):
+class NameTags(PersistList):
     def __init__(self, parent, _list=[]):
         list.__init__(self, _list)
         self.parent = parent
@@ -182,12 +183,12 @@ class NameTags(AutoSaveList):
         if isinstance(item, str):
             try:
                 if self.parent.properties['nametags'].count(tag) is 0:                
-                    AutoSaveList.append(self, item)
+                    PersistList.append(self, item)
             except:
                 pass
 
 
-class Inventory(AutoSaveList):
+class Inventory(PersistList):
     def __init__(self, parent, _list=[], from_db=False):
         list.__init__(self, _list)
         self.parent = parent
