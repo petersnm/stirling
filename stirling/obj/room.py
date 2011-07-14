@@ -5,6 +5,7 @@ emsenn@Stirling 190411
     The base room inheritable
 """
 
+import stirling
 from stirling.obj.object import MasterObject
 
 class Room(MasterObject):
@@ -15,7 +16,6 @@ class Room(MasterObject):
         super(Room, self).new()
         self.name = 'room'
         self.lookables = {}
-        self.exits = {}
 
     def write(self, data):
         """
@@ -27,4 +27,3 @@ class Room(MasterObject):
         for item in self.inventory:
             item.tell(data+'\n')
     	#Insert a control structure to place the exits within this text.
-    
