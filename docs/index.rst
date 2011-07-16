@@ -6,17 +6,19 @@
 The Stirling Engine
 ====================================
 
-Contents:
+Stirling is a game engine for building and playing in a simulated universe.  Written for `Python 3.2`_ using `MongoDB 1.8`_, Stirling provides a core set of functions to create a text-based massively-multiplayer role-playing game, as well as extensive modules for building a world for it.
+
+*It is important to mention that Stirling is just a toddler, so many of the things discussed in the documentation are broken, or not written into the code at all.  It will hopefully always be clear what is and isn't currently possible.*
+
+To learn more about Stirling, you should read the documentation outlining some of Stirling's core concepts.
 
 .. toctree::
-   :maxdepth: 2
-.. automodule:: stirling
-   :members:
+    :maxdepth: 1
 
-Indices and tables
-==================
+    Core/Introduction
+    Core/Player_Handbook/Introduction
+    Core/Developer_Handbook/Introduction
+    Glossary/List
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+.. _`Python 3.2`: http://www.python.org/getit/releases/3.2/
+.. _`MongoDB 1.8`: http://www.mongodb.org
