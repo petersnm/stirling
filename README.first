@@ -1,9 +1,0 @@
-Dependencies:
-    Python 3.2
-    1.8.1
-
-(Earlier versions may work, but I used these versions.)
-
-To run, execute runserver.py
-
-
