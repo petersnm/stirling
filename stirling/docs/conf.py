@@ -31,6 +31,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.ifconfig', 'sphinx.ext.viewcode']
 
+
+todo_include_todos = True
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
 

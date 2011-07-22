@@ -21,7 +21,8 @@ class BaseObj:
     def __init__(self):
         """Give BaseObj() a ``logger`` with the name of ``BaseObj().__module__``.
             Stirling defines the configuration of the logger in :mod:`stirling`
-        :returns: None
+        
+            :returns: None
         """
         self.logger = logging.getLogger(self.__module__)
         return
@@ -30,6 +31,7 @@ class BaseObj:
         """Sends a debug ``message`` through the ``BaseObj().logger``.
 
             :param message: A string that contains the information you wish to debug.
+            :returns: None
         """
         self.logger.debug(message)
         return
@@ -39,14 +41,25 @@ class BaseObj:
  
             :param message: A string that contains information about what just 
               occured that you want to log information about.
+            :returns: None
         """
         self.logger.info(message)
         return
 
     def warning(self, message):
+        """Sends a warning ``message`` through ``BaseObj().logger``.
+
+            :param message: A string explaining the warning condition.
+            :returns: None
+        """
         self.logger.warning(message)
         return
 
     def error(self, message):
+        """Sends an error ``message`` through ``BaseObj().logger``.
+
+            :param message: A string explaining the error that has occurred.
+            :returns: None
+        """
         self.logger.error(message)
         return
