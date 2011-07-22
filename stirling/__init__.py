@@ -1,8 +1,9 @@
-from stirling.globals.obj import get, search, clone
-from stirling.globals.datatypes import PersistList, PersistDict
+HOST = '0.0.0.0'
+PORT = 5878
+
 
 MUD_NAME = "Stirling MUD"
-MUD_VERSION = "0.0.6"
+MUD_VERSION = "0.1.0"
 MUD_SPLASH = ['Oh bfo!', 'We love panthers!', 'PRAISE BEETROOT!',
   'It isn\'t work!', 'Not Canland!', 'Probably illegal!', 'Grue-free!', 
   'Featureless!', 'Both fun and Fun!', 'Bane of Producivity!', 
