@@ -37,6 +37,7 @@ class MUDServer(threading.Thread):
             elif conn in self.connections:
                 recv_data = conn.recv(1024).decode(errors='replace')
                 if recv_data == '':
+                    self.log.info('Connection dropping')
                     self.connections.remove(conn)
                     conn.close()
                     del conn
