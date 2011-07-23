@@ -42,20 +42,17 @@ class PersistDict(dict):
 class Properties(dict):
     def __init__(self, parent, from_dict={}, from_db=False):
         dict.__init__(self, from_dict)
-        try:
-            self.database = MongoDB()
-        except:
-            print('Failed to load MongoDB()')
+        self.db = MongoDB()
         if not from_db:
-            self['_id']     = self.database.entities.insert(self)
+            self['_id']     = self.db.database.entities.insert(self)
             self['_class']  = parent.__class__.__name__
             self['_module'] = parent.__class__.__name__
             parent.__dict__['_id'] = self['_id']
-            self.database.entities[self['_id']] = parent
+            self.db.database.entities[self['_id']] = parent
 
     def __setitem__(self, item, value):
         what = dict.__setitem__(self, item, value)
-        self.database.entities.save(self)
+        self.db.database.entities.save(self)
         return what
 
     def __getitem__(self, item):
@@ -63,5 +60,5 @@ class Properties(dict):
 
     def __delitem__(self, item):
         what = dict.__delitem__(item)
-        self.database.entities.save(self)
+        self.db.database.entities.save(self)
         return what
