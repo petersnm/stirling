@@ -47,6 +47,7 @@ class Properties(dict):
         except:
             print('Failed to load MongoDB()')
         if not from_db:
+            print(type(self.database.entities))
             self['_id']     = self.database.entities.insert(self)
             self['_class']  = parent.__class__.__name__
             self['_module'] = parent.__class__.__name__
