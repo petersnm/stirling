@@ -1,7 +1,0 @@
-Glossary
-========
-
-.. toctree:
-    :glob:
-
-    /Glossary/*
