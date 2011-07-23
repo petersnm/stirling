@@ -6,8 +6,7 @@ import traceback
 import threading
 
 import stirling
-from stirling.core.daemons import MUDServer
-
+from stirling.core.daemons import MUDServer, MongoDB
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s: %(message)s")
 
@@ -30,6 +29,10 @@ class Universe:
             server.start()
         except:
             self.log.error('MUDServer() failed to start()')
+        try:
+            database = MongoDB()
+        except:
+            self.log.error('MongoDB() failed to init.')
         return
 
 if __name__ == '__main__':

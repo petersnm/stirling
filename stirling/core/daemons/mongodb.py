@@ -1,17 +1,14 @@
 import logging
-import threading
 import pymongo
 import sys
-import subprocess
 from pymongo import Connection
 
 import stirling
 
-class MongoDB(threading.Thread):
-    def __init__(self):
+class MongoDB(Connection):
+    def __init__(self, **kw):
+        super(MongoDB, self).__init__(**kw)
         self.log = logging.getLogger(self.__module__)
-        self.entities = Connection().entities
-        self.users    = Connection().users
 
     def getEntity(self, _id):
         if _id in self.entities.keys():
@@ -22,7 +19,6 @@ class MongoDB(threading.Thread):
                 self.log.error('Too many ID matches!')
                 return False
             if matches.count() == 1:
-                objects[_id] = matches[0]
                 return self.entities[_id]
             else:
                 return False
@@ -56,16 +52,19 @@ class MongoDB(threading.Thread):
 
     def cloneEntity(self, path, *args, **kwargs):
         if path.count('.') == 0:
+            print('path.count(\'.\') == 0')
             return False
         _module, _class = path.rsplit('.',1)
         try:
             __import__(_module)
             mod = sys.modules[_module]
         except:
+            print('import failed')
             return False
         try:
             entity = getattr(mod, _class)(*args, **kwargs)
         except:
+            print('setting entity failed')
             return False
         clone = entity()
         self.entities[clone._id] = clone

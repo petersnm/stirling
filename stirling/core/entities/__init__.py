@@ -1,5 +1,3 @@
-from stirling.core.entities.entity import Entity
-
 import stirling
 from stirling.core.daemons import MongoDB
 
@@ -44,16 +42,20 @@ class PersistDict(dict):
 class Properties(dict):
     def __init__(self, parent, from_dict={}, from_db=False):
         dict.__init__(self, from_dict)
+        try:
+            self.database = MongoDB()
+        except:
+            print('Failed to load MongoDB()')
         if not from_db:
-            self['_id']     = MongoDB.entities.insert(self)
+            self['_id']     = self.database.entities.insert(self)
             self['_class']  = parent.__class__.__name__
             self['_module'] = parent.__class__.__name__
             parent.__dict__['_id'] = self['_id']
-            MongoDB.entities[self['_id']] = parent
+            self.database.entities[self['_id']] = parent
 
     def __setitem__(self, item, value):
         what = dict.__setitem__(self, item, value)
-        MongoDB.entities.save(self)
+        self.database.entities.save(self)
         return what
 
     def __getitem__(self, item):
@@ -61,5 +63,5 @@ class Properties(dict):
 
     def __delitem__(self, item):
         what = dict.__delitem__(item)
-        MongoDB.entities.save(self)
+        self.database.entities.save(self)
         return what

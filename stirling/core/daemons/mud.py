@@ -6,7 +6,7 @@ import string
 import threading
 
 import stirling
-from stirling.core.entities import Entity
+from stirling.core.entities.entity import Entity
 
 class MUDServer(threading.Thread):
     def __init__(self, addr, **kw):
@@ -65,7 +65,7 @@ class MUDServer(threading.Thread):
                 else:
                     if conn in self.inbound:
                         self.log.debug('testing!')
-                        user = stirling.core.entities.Entity()
+                        user = Entity()
                     pass
     
     def serve_forever(self):
