@@ -24,7 +24,7 @@ class BaseObj:
         
             :returns: None
         """
-        self.logger = logging.getLogger(self.__module__)
+        self.__dict__['logger']= logging.getLogger(self.__module__)
         return
 
     def debug(self, message):

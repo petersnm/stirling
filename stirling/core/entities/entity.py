@@ -26,13 +26,14 @@ class Entity(stirling.core.BaseObj):
             return
 
     def __getattr__(self, attr):
-        if not (attr.startswith('_get_') or attr.startswith('_set_')) and\
-           '_get_%s' % (attr,) in dir(self):
-            return object.__getattribute__(self, '_get_%s' % (attr,))() 
-        elif attr in self.exclude:
-            return self.__dict__[attr]
-        else:
-            return self.__dict__['properties'][attr]
+        if not attr.startswith(attr):
+            try:
+                return object.__getattribute__(self, '_get_%s' % (attr,))() 
+            except:
+                if attr in self.exclude:
+                    return self.__dict__[attr]
+                else:
+                    return self.__dict__['properties'][attr]
 
     def __delattr__(self, attr):
         if hasattr(self, "_del_%s" % (attr,)) and not attr.startswith('_del_'):
