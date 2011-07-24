@@ -1,7 +1,17 @@
+"""
+    .. module:: stirling.core.entities
+        :synopsis: Defines PersistList and PersistDict datatypes.
+    .. modauthor: Hunter Carroll <abzde@abzde.com>
+    .. versionadded: 0.1.0
+"""
+
 import stirling
-from stirling.core.daemons import MongoDB
+from stirling.core.entities.entity import Entity
 
 class PersistList(list):
+    """
+        I'm not writing up these docstrings untilI know these are necessary.
+    """
     def __init__(self, parent, _list=[]):
         list.__init__(self, _list)
         self.parent = parent
@@ -27,6 +37,9 @@ class PersistList(list):
 
 
 class PersistDict(dict):
+    """
+        See docstring for PersistList
+    """
     def __init__(self, parent, _dict={}):
         dict.__init__(self, _dict)
         self.parent = parent
@@ -38,27 +51,3 @@ class PersistDict(dict):
     def __delitem__(self, item):
         dict.__delitem__(self, item)
         self.parent.save()
-
-class Properties(dict):
-    def __init__(self, parent, from_dict={}, from_db=False):
-        dict.__init__(self, from_dict)
-        self.db = MongoDB()
-        if not from_db:
-            self['_id']     = self.db.database.entities.insert(self)
-            self['_class']  = parent.__class__.__name__
-            self['_module'] = parent.__class__.__name__
-            parent.__dict__['_id'] = self['_id']
-            self.db.database.entities[self['_id']] = parent
-
-    def __setitem__(self, item, value):
-        what = dict.__setitem__(self, item, value)
-        self.db.database.entities.save(self)
-        return what
-
-    def __getitem__(self, item):
-        return dict.__getitem__(self, item)
-
-    def __delitem__(self, item):
-        what = dict.__delitem__(item)
-        self.db.database.entities.save(self)
-        return what

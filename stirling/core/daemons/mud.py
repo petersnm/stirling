@@ -6,16 +6,33 @@ import string
 import threading
 
 import stirling
-from stirling.core.entities.entity import Entity
 
 class MUDServer(threading.Thread):
+    """
+        .. module::     MUDServer()
+            :synopsis: The main MUD socket server
+        .. modauthor: Morgan Sennhauser <emsenn@emsenn.com>
+        .. versionadded:: 0.1.0
+    """
     def __init__(self, addr, **kw):
         """Initialize the socket server and set up a logger
 
             :param addr: A tuple of (``Host``, ``Port``).
+            :type addr: tuple
             :param kw**: Any additional keywords are passed to the parent, in 
-              this case, :mod"`threading.Thread`
+              this case, :mod:`threading.Thread`.
+            :var socket: A socket object, the server iteself.
+            :var connections: A list of current connections.
+            :var inbound: A list of inbound connections. (Those which haven't 
+                been logged in yet.)
+            :var connection_user: A dict pairing connections with their user 
+                properties.
             :returns: None
+
+            Creates a new socket server and binds it to `addr`, which is 
+            ``(stirling.HOST``, stirling.PORT)`` by default.  This socket 
+            server acts as the main output of the MUD, and is therefore of 
+            extremely high importance to Stirling.
         """
         super(MUDServer, self).__init__(**kw)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,7 +41,7 @@ class MUDServer(threading.Thread):
         self.socket.listen(10)
         self.connections = []
         self.inbound = []
-        self.connections_player = {} #{connection: player} mapping
+        self.connections_user = {} #{connection: player} mapping
         self.log = logging.getLogger(self.__module__)
         return None
 
@@ -33,8 +50,12 @@ class MUDServer(threading.Thread):
             start.
 
             :returns: None
+
+            .. todo:: Rather than have this be so simple, we could probably 
+                make the wihle check act more efficiently
         """
-        self.serve_forever()
+        while True:
+            self.handle()
         return
 
     def handle(self):
@@ -44,6 +65,7 @@ class MUDServer(threading.Thread):
 
             .. todo::
                 Handle logging in.
+                Expand the documentation/clean up this function
         """
         r, w, e = select.select([self.socket] + self.connections, [], [], 5)
         for conn in r:
@@ -65,16 +87,4 @@ class MUDServer(threading.Thread):
                 else:
                     if conn in self.inbound:
                         self.log.debug('testing!')
-                        user = Entity()
                     pass
-    
-    def serve_forever(self):
-        """The function that keeps ``MUDServer()`` serving.
-
-            :returns: None
-
-            .. todo:: Make this poll every so often, rather than as fast as 
-                it can.
-        """
-        while True:
-            self.handle()

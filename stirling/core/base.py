@@ -6,14 +6,17 @@ import stirling
 class BaseObj:
     """
         .. module:: BaseObj()
-            :synopsis: The absolute parent for almost all stirling objects.
-        .. moduleauthor:: Morgan Sennhauser <emsenn@emsenn.com>
+            :synopsis:      The absolute parent for almost all stirling objects.
+        .. moduleauthor::   Morgan Sennhauser <emsenn@emsenn.com>
+        .. versionadded:    0.1.0
+
         .. function::   __init__()
                         debug(message)
                         info(message)
                         warning(message)
                         error(message)
-        
+        .. note:: BaseObj may also be imported directly from ``stirling.core``  
+
         BaseObj is the absolute parent for almost every other class created by 
         Stirling, with the except of threaded Daemons. At this point, the 
         BaseObj() only simplifies the process of logging.

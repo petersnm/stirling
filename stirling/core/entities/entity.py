@@ -2,17 +2,20 @@ import stirling
 from stirling.core.daemons import MongoDB
 
 class Entity(stirling.core.BaseObj):
+    """
+    """
     def __init__(self, from_dict={}, from_db=False, **kw):
         super(Entity, self).__init__(**kw)
-        from stirling.core.entities import Properties
         self.__dict__['exclude'] = ['properties', 'logger', 'debug', 'info',
           'warning', 'error', 'save', 'move', 'remove', 'tell',
           '_get_environment', 'set_name']
         self.__dict__['customs']       = ['name']
         self.__dict__['properties']    = Properties(self, from_dict, from_db=from_db)
-        self.name,     self.desc       = ''
-        self.nametags, self.inventory  = []
-        self.metrics                   = {}
+        self.name       = 'entity'
+        self.desc       = 'This is an entity.'
+        self.nametags   = ['entity']
+        self.inventory  = []
+        self.metrics    = {}
 
     def __setattr__(self, attr, value):
         if "_set_%s" % (attr,) in dir(self):
@@ -22,7 +25,6 @@ class Entity(stirling.core.BaseObj):
             return
         else:
             self.__dict__['properties'][attr] = value
-            self.save()
             return
 
     def __getattr__(self, attr):
@@ -57,16 +59,17 @@ class Entity(stirling.core.BaseObj):
 class Properties(dict):
     def __init__(self, parent, from_dict={}, from_db=False):
         dict.__init__(self, from_dict)
+        self.db = MongoDB()
         if not from_db:
-            self['_id']     = MongoDB.entities.insert(self)
+            self['_id']     = self.db.entities.insert(self)
             self['_class']  = parent.__class__.__name__
             self['_module'] = parent.__class__.__name__
             parent.__dict__['_id'] = self['_id']
-            MongoDB.entities[self['_id']] = parent
+            self.db.loaded_entities[self['_id']] = parent
 
     def __setitem__(self, item, value):
         what = dict.__setitem__(self, item, value)
-        MongoDB.entities.save(self)
+        self.db.entities.save(self)
         return what
 
     def __getitem__(self, item):
@@ -74,5 +77,9 @@ class Properties(dict):
 
     def __delitem__(self, item):
         what = dict.__delitem__(item)
-        MongoDB.entities.save(self)
+        self.db.entities.save(self)
         return what
+
+    def save(self):
+        self.db.entities.save(self)
+        return
