@@ -2,18 +2,42 @@
 
 import sys
 import logging
+import traceback
+import threading
 
-logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger(__name__)
-log.debug('main')
+import stirling
+from stirling.core.daemons import MUDServer, MongoDB
 
-from stirling.daemon.server.mud import runserver
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s: %(message)s")
 
-try:
-    log.info('Starting server')
-    runserver()
-except SystemExit:
-    exit()
-except:
-    log.debug('exception!', exc_info=sys.exc_info())
-    pass
+class Universe:
+    def __init__(self):
+        self.log = logging.getLogger(self.__module__)
+        try:
+            self.startCore()
+        except:
+            self.log.error('startCore() failed!  This is fatal!')
+            return
+        return
+
+    def startCore(self):
+        try:
+            server = MUDServer((stirling.HOST, stirling.PORT))
+        except:
+            self.log.warning('Failed to create MUDServer() instance.')
+        try:
+            server.start()
+        except:
+            self.log.error('MUDServer() failed to start()')
+        try:
+            database = MongoDB()
+        except:
+            self.log.error('MongoDB() failed to init.')
+        return
+
+if __name__ == '__main__':
+    try:
+        Om = Universe()
+    except:
+        print('Exitting.')
+        exit()

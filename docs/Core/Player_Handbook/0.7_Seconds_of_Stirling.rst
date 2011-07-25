@@ -1,4 +1,0 @@
-0.7 Seconds of Stirling
-=======================
-
-In order to help introduce to you what Stirling is, I figured a sample of gameplay would be useful.  What follows is approximately three-fourths of a second of gameplay.  Don't worry if you don't understand it all at first - come back to it after reading more of the manual and it will all start to make more sense.
