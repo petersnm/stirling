@@ -6,6 +6,7 @@
     .. versionadded:: 0.1 import logging
 """
 import logging
+import traceback
 import pymongo
 import sys
 from pymongo import Connection
@@ -67,8 +68,10 @@ class MongoDB:
                 self.log.warning('Too many ID matches!')
                 return None
             if matches.count() == 1:
-                self.loaded_clones[_id] = self.clones[_id]
-                return self.clones[_id]
+                path = "%s.%s" % (matches[0]['_module'], matches[0]['_class'])
+                obj = self.clone_entity(path, from_dict=matches[0])
+                self.loaded_clones[_id] = obj 
+                return obj
             else:
                 return None
 
@@ -138,6 +141,7 @@ class MongoDB:
             __import__(_module)
             mod = sys.modules[_module]
         except:
+            self.log.debug(traceback.format_exc())
             self.log.debug('import failed')
             return None
         try:
