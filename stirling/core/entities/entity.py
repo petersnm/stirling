@@ -107,8 +107,8 @@ class Entity(stirling.core.BaseObj):
 
     def move(self, destination):
         """ Moves the entity to a different environment.
-            :param destination:
-
+            :param destination: the new environment, should be an Entity.
+            :returns boolean: True if the move succeeded, False is the destination is not an Entity.
             
         """
         if isinstance(destination, Entity) is True:
