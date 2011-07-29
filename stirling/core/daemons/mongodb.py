@@ -5,21 +5,21 @@ from pymongo import Connection
 
 import stirling
 
-class MongoDB(Connection):
-    def __init__(self, **kw):
-        super(MongoDB, self).__init__(**kw)
+class MongoDB:
+    def __init__(self):
+        self.database = Connection().stirling
         self.log = logging.getLogger(self.__module__)
 
     def getEntity(self, _id):
-        if _id in self.entities.keys():
-            return self.entities[_id]
+        if _id in self.database.entities.keys():
+            return self.database.entities[_id]
         else:
-            matches = self.entities.find({'_id': _id})
+            matches = self.database.entities.find({'_id': _id})
             if matches.count() > 1:
                 self.log.error('Too many ID matches!')
                 return False
             if matches.count() == 1:
-                return self.entities[_id]
+                return self.database.entities[_id]
             else:
                 return False
 
@@ -27,7 +27,7 @@ class MongoDB(Connection):
         if path.count('.') == 0:
             return False
         _module, _class = path.rsplit('.', 1)
-        matches         = self.entities.find({'_module': _module, '_class': _class})
+        matches         = self.database.entities.find({'_module': _module, '_class': _class})
         ret_list        = []
         if matches:
             for match in matches:
@@ -67,5 +67,5 @@ class MongoDB(Connection):
             print('setting entity failed')
             return False
         clone = entity()
-        self.entities[clone._id] = clone
+        self.database.entities[clone._id] = clone
         return clone
