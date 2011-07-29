@@ -40,6 +40,12 @@ class Entity(stirling.core.BaseObj):
             return
 
     def __getattr__(self, attr):
+        """ Gets an attribute value in the current class.
+            :param attr: the attribute whose value you want returned.
+            :returns: the value of ``attr``.
+
+            ``__getattr__()`` is the base getter for every entity in the engine. It checks for custom getters before looking for excluded attributes in ``self.__dict__[attr]`` and normal attributes in ``self.__dict__['properties']``. 
+        """
         if not attr.startswith(attr):
             try:
                 return object.__getattribute__(self, '_get_%s' % (attr,))() 
@@ -50,7 +56,10 @@ class Entity(stirling.core.BaseObj):
                     return self.__dict__['properties'][attr]
 
     def __delattr__(self, attr):
-        """
+        """ Deletes an attribute from the current class.
+            :param attr: the attribute to be deleted.
+            
+            ``__delattr__()`` is the base attribute deleter. It first checks for custom deleters. If none are found, it checks the :term:`excluded variable`s for a match. If none are found again, it deletes the attribute from ``self.properties[attr]``.
             :warning: Deleting an attribute that is in ``self.exclude`` is ***dangerous***,\
             as it breaks core functionality and the way the engine talks to the database.
         """
@@ -63,6 +72,13 @@ class Entity(stirling.core.BaseObj):
             del self.properties[attr]
 
     def _set_name(self, name):
+        """ Sets the name attribute for the entity.
+            :param name: The name that the entity will appear as in-game.
+            :type str:
+            :returns boolean: True is returns when the setting is sucessful, false is returned if ``name`` is not a string.
+
+            ``_set_name()`` is a custom setter for ``self.name``. This property determines the name that the entity will take in-game. It also adds to the :term:`nametag` property list as a lowercase version of ``name`` while deleting the old nametag.
+        """
         if isinstance(name, str) is True:
             try:
                 self.nametags.remove(self.name)
@@ -75,17 +91,29 @@ class Entity(stirling.core.BaseObj):
             return False
 
     def _get_environment(self):
+        """ Returns the current environment for the entity.
+            :returns: the object that represents the environment or None.
+            :rtype: object, None
+        """
         return MongoDB().get_clone(self.__dict__['properties']['environment'])
 
     def handle_input(self, input):
+        """ 
+
+        """
         if type(self.user) is dict and self.environment is not None:
             self.debug(self.environment.desc)
         return
 
     def move(self, destination):
-        if self.environment:
-            self.environment.inventory.remove(self._id)
+        """ Moves the entity to a different environment.
+            :param destination:
+
+            
+        """
         if isinstance(destination, Entity) is True:
+            if self.environment:
+                self.environment.inventory.remove(self._id)
             self.environment = destination._id
             try:
                 destination.inventory.append(self._id)
