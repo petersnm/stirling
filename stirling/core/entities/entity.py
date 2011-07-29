@@ -28,14 +28,13 @@ class Entity(stirling.core.BaseObj):
             return
 
     def __getattr__(self, attr):
-        if not attr.startswith(attr):
-            try:
-                return object.__getattribute__(self, '_get_%s' % (attr,))() 
-            except:
-                if attr in self.exclude:
-                    return self.__dict__[attr]
-                else:
-                    return self.__dict__['properties'][attr]
+        try:
+            return object.__getattribute__(self, '_get_%s' % (attr,))() 
+        except:
+            if attr in self.exclude:
+                return self.__dict__[attr]
+            else:
+                return self.__dict__['properties'][attr]
 
     def __delattr__(self, attr):
         if hasattr(self, "_del_%s" % (attr,)) and not attr.startswith('_del_'):
@@ -68,8 +67,11 @@ class Entity(stirling.core.BaseObj):
             
 
     def move(self, destination):
-        if self.environment:
+        try:
             self.environment.inventory.remove(self._id)
+        except KeyError:
+            pass
+        # removes the object from current environment if it has one
         if isinstance(destination, Entity) is True:
             self.environment = destination._id
             try:
