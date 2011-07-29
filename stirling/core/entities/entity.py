@@ -62,8 +62,6 @@ class Entity(stirling.core.BaseObj):
         return MongoDB().get_clone(self.__dict__['properties']['environment'])
 
     def handle_input(self, input):
-        self.debug(self.user)
-        self.debug(self.environment)
         if type(self.user) is dict and self.environment is not None:
             self.debug(self.environment.desc)
         return

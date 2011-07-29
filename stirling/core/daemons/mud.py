@@ -106,14 +106,14 @@ class MUDServer(threading.Thread):
                     elif len(self.registering[conn]) is 2:
                         if self.registering[conn][1] == recv_data:
                             conn.send('Passwords match, creating user account.\n'.encode())
-                            new_body = Entity()
+                            new_body = MongoDB().clone_entity('stirling.core.entities.entity.Entity')
                             user_info = {
                               'username' : self.registering[conn][0],
                               'password' : hashlib.sha256(self.registering[conn][1].encode()).hexdigest(),
                               'body'     : new_body._id, }
                             new_user = MongoDB().users.insert(user_info) 
-                            del self.registering[conn]
                             new_room = MongoDB().clone_entity('world.test_room.testRoom')
+                            del self.registering[conn]
                             new_body.move(new_room)
                             new_body.__dict__['exclude'].append('user')
                             new_body.user = user_info
@@ -124,5 +124,6 @@ class MUDServer(threading.Thread):
                             self.registering[conn] = [self.registering[conn][0]]
                 elif conn in self.active:
                     self.active[conn].handle_input(recv_data)
-                    self.active[conn].debug(MongoDB().get_clone(self.active[conn]._id))
+                    self.active[conn].foo = 'bar'
+                    self.log.debug(self.active[conn].foo)
                 return
