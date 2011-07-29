@@ -62,6 +62,8 @@ class Entity(stirling.core.BaseObj):
         return MongoDB().get_clone(self.__dict__['properties']['environment'])
 
     def handle_input(self, input):
+        self.debug(self.user)
+        self.debug(self.environment)
         if type(self.user) is dict and self.environment is not None:
             self.debug(self.environment.desc)
         return
@@ -71,7 +73,7 @@ class Entity(stirling.core.BaseObj):
         if self.environment:
             self.environment.inventory.remove(self._id)
         if isinstance(destination, Entity) is True:
-            self.properties['environment'] = destination._id
+            self.environment = destination._id
             try:
                 destination.inventory.append(self._id)
             except:
@@ -96,9 +98,9 @@ class Properties(dict):
         if not from_db:
             self['_id']     = self.db.clones.insert(self)
             self['_class']  = parent.__class__.__name__
-            self['_module'] = parent.__class__.__name__
+            self['_module'] = parent.__class__.__module__
             parent.__dict__['_id'] = self['_id']
-            self.loaded_clones[self['_id']] = parent
+            self.db.loaded_clones[self['_id']] = parent
 
     def __setitem__(self, item, value):
         what = dict.__setitem__(self, item, value)
