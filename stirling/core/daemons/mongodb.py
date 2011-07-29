@@ -1,4 +1,12 @@
+"""
+    .. module:: stirling.core.daemons.mongodb
+        :synopsis: This daemon acts as a layer between Stirling and the 
+            external MongoDB daemon.
+    .. modauthor::  Morgan Sennhauser <emsenn@emsenn.com>
+    .. versionadded:: 0.1 import logging
+"""
 import logging
+import traceback
 import pymongo
 import sys
 from pymongo import Connection
@@ -6,15 +14,10 @@ from pymongo import Connection
 import stirling
 
 class MongoDB:
-    """ 
-        .. module::      MongoDB()
-            :synopsis:  This daemon acts as a layer between Stirling and the 
-                external MongoDB daemon.
-        .. modauthor:   Morgan Sennhauser <emsenn@emsenn.com>
-        .. versionadded:: 0.1.0
+    """ Contains the functions used to interact with the external database.  
     """
     def __init__(self):
-        """ Creates a buffer layer between Stirling and the external MongoDB daemon.  
+        """ Creates a layer between Stirling and the external MongoDB daemon.  
 
             :var database: external MongoDB database ``stirling``
             :var clones: dict of MongoDB collection ``clones`` in the 
@@ -37,9 +40,11 @@ class MongoDB:
         self.database = Connection().stirling
         self.clones = self.database.clones
         self.loaded_clones = {}
+        self.users = self.database.users
+        self.loaded_users = {}
         self.log = logging.getLogger(self.__module__)
 
-    def getClone(self, _id):
+    def get_clone(self, _id):
         """ Find and return an entity matching `_id`.
 
             :param _id: A unique identifier for the clone
@@ -58,17 +63,19 @@ class MongoDB:
         if _id in self.loaded_clones.keys():
             return self.loaded_clones[_id]
         else:
-            matches = self.database.clones.find({'_id': _id})
+            matches = self.clones.find({'_id': _id})
             if matches.count() > 1:
                 self.log.warning('Too many ID matches!')
                 return None
             if matches.count() == 1:
-                self.database.loaded_clones[_id] = self.database.clones[_id]
-                return self.database.clones[_id]
+                path = "%s.%s" % (matches[0]['_module'], matches[0]['_class'])
+                obj = self.clone_entity(path, from_dict=matches[0])
+                self.loaded_clones[_id] = obj 
+                return obj
             else:
                 return None
 
-    def searchClones(self, path):
+    def search_clones(self, path):
         """ Search for all clones matching `path`
 
             :param path: full path to the entity class you wish to find, i.e. 
@@ -85,7 +92,7 @@ class MongoDB:
         if path.count('.') == 0:
             return None
         _module, _class = path.rsplit('.', 1)
-        matches         = self.database.clones.find({'_module': _module, '_class': _class})
+        matches         = self.clones.find({'_module': _module, '_class': _class})
         ret_list        = []
         if matches:
             for match in matches:
@@ -105,12 +112,14 @@ class MongoDB:
                         return None
                     self.loaded_clones[match._id] = match
                     ret_list.append[match]
-            if ret_list: return ret_list
-            else:        return False
+            if ret_list:
+                return ret_list
+            else:
+                return False
         else:
             return False
 
-    def cloneEntity(self, path, *args, **kwargs):
+    def clone_entity(self, path, *args, **kwargs):
         """ Creates a clone of the class specified by `path`
 
             :param path: full path to the entity class you want to clone, i.e.
@@ -125,19 +134,71 @@ class MongoDB:
             it all `*args` and `**kwargs`, before returning the new clone.
         """
         if path.count('.') == 0:
+            self.log.debug('path count = 0')
             return None
-        _module, _class = path.rsplit('.',1)
+        _module, _class = path.rsplit('.', 1)
         try:
             __import__(_module)
             mod = sys.modules[_module]
         except:
-            print('import failed')
+            self.log.debug(traceback.format_exc())
+            self.log.debug('import failed')
             return None
         try:
-            entity = getattr(mod, _class)(*args, **kwargs)
+            clone = getattr(mod, _class)(*args, **kwargs)
         except:
-            print('setting entity failed')
+            self.log.debug('creating clone failed')
             return None
-        clone = entity()
+        clone.save()
         self.loaded_clones[clone._id] = clone
         return clone
+
+    def get_user(self, name):
+        match = self.users.find_one({ "username" : name })
+        if type(match) is not dict:
+            self.log.warning('Attempted to load nonexisting user %s' % (name))
+            return False
+        else:
+            return match
+
+    def make_user(self, name, password):
+        self.users.insert({ 'username' : name, 'password' : password})
+        return True
+
+class persistList(list):
+    def __init__(self, parent, _list=[]):
+        list.__init__(self, _list)
+        self.parent = parent
+
+    def append(self, item):
+        self += [item]
+        self.parent.save()
+
+    def remove(self, item):
+        x = list.remove(self, item)
+        self.parent.save()
+        return x
+
+    def insert(self, index, item):
+        x = list.insert(self, index, item)
+        self.parent.save()
+        return x
+
+    def pop(self, index=-1):
+        x = list.pop(self, index)
+        self.parent.save()
+        return x    
+
+
+class PersistDict(dict):
+    def __init__(self, parent, _dict={}):
+        dict.__init__(self, _dict)
+        self.parent = parent
+
+    def __setitem__(self, item):
+        dict.__setitem__(self, item)
+        self.parent.save()
+    
+    def __delitem__(self, item):
+        dict.__delitem__(self, item)
+        self.parent.save()

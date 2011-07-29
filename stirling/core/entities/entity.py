@@ -1,5 +1,5 @@
-mport stirling
-from stirling.core.daemons import MongoDB
+import stirling
+from stirling.core.daemons.mongodb import MongoDB, persistList, PersistDict
 
 class Entity(stirling.core.BaseObj):
     """
@@ -16,10 +16,10 @@ class Entity(stirling.core.BaseObj):
           '_get_environment', 'set_name']
         self.__dict__['customs']       = ['name']
         self.__dict__['properties']    = Properties(self, from_dict, from_db=from_db)
-        self.name       = 'entity'
+        self.nametags   = nameTags(self, ['entity'])
+        self.name       = 'Entity'
         self.desc       = 'This is an entity.'
-        self.nametags   = ['entity']
-        self.inventory  = []
+        self.inventory  = persistList(self, [])
         self.metrics    = {}
 
     def __setattr__(self, attr, value):
@@ -62,11 +62,38 @@ class Entity(stirling.core.BaseObj):
         else:
             del self.properties[attr]
 
+    def _set_name(self, name):
+        if isinstance(name, str) is True:
+            try:
+                self.nametags.remove(self.name)
+            except:
+                pass
+            self.properties['nametags'] += name.lower()
+            self.properties['name'] = name
+            return True
+        else:
+            return False
+
+    def _get_environment(self):
+        return MongoDB().get_clone(self.__dict__['properties']['environment'])
+
+    def handle_input(self, input):
+        if type(self.user) is dict and self.environment is not None:
+            self.debug(self.environment.desc)
+        return
+
     def move(self, destination):
-        """
-            :todo: Write the actual move() function.
-        """
-        pass
+        if self.environment:
+            self.environment.inventory.remove(self._id)
+        if isinstance(destination, Entity) is True:
+            self.environment = destination._id
+            try:
+                destination.inventory.append(self._id)
+            except:
+                destination.inventory = persistList(destination, [self._id])
+            return True
+        else:
+            return False
 
     def remove(self):
         """
@@ -80,21 +107,23 @@ class Entity(stirling.core.BaseObj):
         """
         pass
 
+    def save(self):
+        self.properties.save()
 
 class Properties(dict):
     def __init__(self, parent, from_dict={}, from_db=False):
         dict.__init__(self, from_dict)
         self.db = MongoDB()
         if not from_db:
-            self['_id']     = self.db.entities.insert(self)
+            self['_id']     = self.db.clones.insert(self)
             self['_class']  = parent.__class__.__name__
-            self['_module'] = parent.__class__.__name__
+            self['_module'] = parent.__class__.__module__
             parent.__dict__['_id'] = self['_id']
-            self.db.loaded_entities[self['_id']] = parent
+            self.db.loaded_clones[self['_id']] = parent
 
     def __setitem__(self, item, value):
         what = dict.__setitem__(self, item, value)
-        self.db.entities.save(self)
+        self.db.clones.save(self)
         return what
 
     def __getitem__(self, item):
@@ -102,9 +131,22 @@ class Properties(dict):
 
     def __delitem__(self, item):
         what = dict.__delitem__(item)
-        self.db.entities.save(self)
+        self.db.clones.save(self)
         return what
 
     def save(self):
-        self.db.entities.save(self)
+        self.db.clones.save(self)
         return
+
+class nameTags(persistList):
+    def __init__(self, parent, _list=[]):
+        list.__init__(self, _list)
+        self.parent = parent
+
+    def append(self, item):
+        if isinstance(item, str):
+            try:
+                if self.parent.properties['nametags'].count(tag) is 0:                
+                    PersistList.append(self, item)
+            except:
+                pass

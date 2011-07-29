@@ -1,11 +1,20 @@
+"""
+    .. module:: stirling.core.daemons.mud
+        :synopsis: The main MUD socket server and related functions
+    .. modauthor: Hunter Carroll <abzde@abzde.com>
+    .. modauthor: Morgan Sennhauser <emsenn@emsenn.com>
+    .. versionadded:: 0.1
+"""
+import hashlib
 import logging
 import socket
 import select
 import random
-import string
 import threading
 
 import stirling
+from stirling.core.daemons.mongodb import MongoDB
+from stirling.core.entities import Entity
 
 class MUDServer(threading.Thread):
     """
@@ -39,8 +48,11 @@ class MUDServer(threading.Thread):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(addr)
         self.socket.listen(10)
-        self.connections = []
-        self.inbound = []
+        self.connections      = []
+        self.inbound          = []
+        self.registering      = {}
+        self.logging_in       = []
+        self.active           = {}
         self.connections_user = {} #{connection: player} mapping
         self.log = logging.getLogger(self.__module__)
         return None
@@ -78,13 +90,40 @@ class MUDServer(threading.Thread):
                 new_conn.send(splash.encode())
                 self.inbound.append(new_conn)
             elif conn in self.connections:
-                recv_data = conn.recv(1024).decode(errors='replace')
-                if recv_data == '':
-                    self.log.info('Connection dropping')
-                    self.connections.remove(conn)
-                    conn.close()
-                    del conn
-                else:
-                    if conn in self.inbound:
-                        self.log.debug('testing!')
-                    pass
+                recv_data = conn.recv(1024).decode(errors='replace').rstrip('\r\n')
+                if conn in self.inbound:
+                    inbound_user = MongoDB().get_user(recv_data)
+                    if type(inbound_user) is not dict:
+                        conn.send('That user is not registered, to '
+                          'do so, please type the password you want.\n'.encode())
+                        self.inbound.remove(conn)
+                        self.registering[conn] = [recv_data]
+                elif conn in self.registering:
+                    if len(self.registering[conn]) is 1:
+                        self.registering[conn].append(recv_data)
+                        conn.send('To complete registration, please re-enter '
+                          'your password.\n'.encode())
+                    elif len(self.registering[conn]) is 2:
+                        if self.registering[conn][1] == recv_data:
+                            conn.send('Passwords match, creating user account.\n'.encode())
+                            new_body = MongoDB().clone_entity('stirling.core.entities.entity.Entity')
+                            user_info = {
+                              'username' : self.registering[conn][0],
+                              'password' : hashlib.sha256(self.registering[conn][1].encode()).hexdigest(),
+                              'body'     : new_body._id, }
+                            new_user = MongoDB().users.insert(user_info) 
+                            new_room = MongoDB().clone_entity('world.test_room.testRoom')
+                            del self.registering[conn]
+                            new_body.move(new_room)
+                            new_body.__dict__['exclude'].append('user')
+                            new_body.user = user_info
+                            self.active[conn] = new_body
+                        else:
+                            conn.send('Password didn\'t match, what is it you '
+                              'want your password to be?\n'.encode())
+                            self.registering[conn] = [self.registering[conn][0]]
+                elif conn in self.active:
+                    self.active[conn].handle_input(recv_data)
+                    self.active[conn].foo = 'bar'
+                    self.log.debug(self.active[conn].foo)
+                return
