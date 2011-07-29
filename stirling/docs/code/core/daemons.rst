@@ -11,7 +11,7 @@ MUDServer
 .. automodule:: stirling.core.daemons.mud
 
 .. autoclass:: MUDServer
-    :members: __init__, run, handle, serve_forever
+    :members: 
 
 
 MongoDB
@@ -20,4 +20,4 @@ MongoDB
 .. automodule:: stirling.core.daemons.mongodb
 
 .. autoclass:: MongoDB
-    :members: __init__, getEntity, cloneEntity, searchEntities
+    :members: 

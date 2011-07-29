@@ -16,7 +16,6 @@ If you are a player, unfortunately, Stirling is not to the point where there is 
 Contents:
 
 .. toctree::
-    :glob:
     :maxdepth: 1
 
     /code/index
