@@ -1,24 +1,89 @@
-===============
-Stirling Engine
-===============
+===================
+The Stirling Engine
+===================
 
-The Stirling Engine is a multiverse simulator created to run a 
-:doc:`textual MMORPG <glossary/mud>`.  Written in Python 3.2 using MongoDB 1.8, 
-Stirling aims to provide all the tools necessary to craft intricate simulated 
-worlds, where users can create an avatar to interact with the entities around them.
 
-Introduction
-------------
+What is Stirling?
+-----------------
 
-If you are a developer interested in learning more about Stirling, you should check out the :doc:`code documentation </code/index>`.  In short, Stirling is an engine for developing and running MMORPGs, but with a radically different approach to, well, most everything.
+* 324 lines of Python.
+* 538 lines of API documentation.
+* 7 years of thought and preparation.
+* 3 months actual work.
 
-If you are a player, unfortunately, Stirling is not to the point where there is anything worth playing!  If you want to know more, check out our `mailing list <http://groups.google.com/group/stirling-mud>`_.
-Contents:
+
+What does that get us?
+----------------------
+
+A multi-user multiverse simulator.
+
+
+Wait, what?
+-----------
+
+.. note:: Many of the things in the follow paragraph describe features *still 
+    to come*.  I wrote it this way to try and share why I am so excited about 
+    this project, and why *you should be too*.
+
+Stirling is, vaguely, a massively-multiplayer roleplaying game (MMORPG).  In 
+another way, Stirling is also a simulation game akin to SimCity.  From yet 
+another perspective, Stirling is more like a real-time strategy game like 
+Starcraft.
+
+How does Stirling manage to incorporate such diversity of features into a 
+single game?  By giving the game engine a greater degree of freedom in how 
+to manage the multiverse the game exists in, we're able to construct a much 
+deeper set of instructions for how exactly things should work.
+
+It helps to think of Stirling as a tabletop RPG, such as Dungeons & Dragons or 
+Paranoia, except with the perfect Dungeon Master.  Instead of rolling the dice 
+only for things occuring in the immediate vicinity of any player's characters, 
+Stirling the Dungeon Master is rolling the dice for the entire dimension it is 
+in charge of.  What dimension is it that Stirling is in charge of?  Whichever 
+kind you build for it, and I have to brag, it is one of our goals for building 
+worlds to be as easy as existing in them is.
+
+This allows for awesome things to occur that don't normally get to happen in a 
+computer game, such as evolution, climate change, the rise and fall of 
+civilizations, the colonization of unsettled territory, trans-planar tourism, 
+and, of course, the expansion and development of the game, just to name a few.
+
+
+Okay, you have my interest.
+---------------------------
+
+Here's the bad news about all this.  I'm not the most skilled of developers to 
+begin with, and my friends and I  really only work on this in my spare time.  
+That means that the Stirling there is code for is not anywhere near the 
+Stirling there are ideas for.
+
+
+Aww.  Well, features *are* there?
+---------------------------------
+
+Unfortunately, not that many that make Stirling very useful to anyone who 
+isn't a developer.  Right now, Stirling has the following features:
+
+* A socket server for users to connect to.
+* A basic API for creating simple entities.
+* User registration.
+
+And that's it.  You can't even log in again, after you've registered a user.  
+Obviously, we have a way to go.  Of course, we can get there much faster with 
+a few more people helping us test and develop it.
+
+If you're interested in being a developer for Stirling, you'll want to read 
+the :doc:`Developer's Handbook <dev/index>`.  If you're more interested in 
+reading some of the documentation explaining concepts and less technical 
+explanations of the game, check out the :doc:`Concept Manual 
+<concepts/index>`.  For a full overview, check the table of contents below.
+
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
-    /intro/index
-    /code/index
-    /glossary/index
+    /concepts/index
+    /dev/index
+    /glossary
+    /autodoc/modules
     /todo

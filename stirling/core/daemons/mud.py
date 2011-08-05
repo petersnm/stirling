@@ -13,29 +13,29 @@ import random
 import threading
 
 import stirling
-from stirling.core.daemons.mongodb import MongoDB
-from stirling.core.entities import Entity
 
 class MUDServer(threading.Thread):
-    """
-        .. module::     MUDServer()
-            :synopsis: The main MUD socket server
-        .. modauthor: Morgan Sennhauser <emsenn@emsenn.com>
-        .. versionadded:: 0.1.0
+    """ The MUD server is the main method of connection for users and 
+        developers wishing to interact with the MUD in any way.
     """
     def __init__(self, addr, **kw):
-        """Initialize the socket server and set up a logger
+        """ Initialize the socket server and set up a logger
 
-            :param addr: A tuple of (``Host``, ``Port``).
-            :type addr: tuple
-            :param kw**: Any additional keywords are passed to the parent, in 
-              this case, :mod:`threading.Thread`.
-            :var socket: A socket object, the server iteself.
-            :var connections: A list of current connections.
-            :var inbound: A list of inbound connections. (Those which haven't 
-                been logged in yet.)
+            :param  addr:       A tuple of (``Host``, ``Port``).
+            :type   addr:       tuple
+
+            :param  \*\*kw:     Any additional keywords are passed to the 
+                                    parent, in this case, 
+                                    :mod:`threading.Thread`.
+            :type   \*\*kw:     mixed
+
+            :var    socket:     A socket object, the server iteself.
+            :var   connections: A list of current connections.
+            :var    inbound:    A list of inbound connections. (Those which 
+                                    haven't been logged in yet.)
             :var connection_user: A dict pairing connections with their user 
-                properties.
+                                    properties.
+
             :returns: None
 
             Creates a new socket server and binds it to `addr`, which is 
@@ -64,7 +64,7 @@ class MUDServer(threading.Thread):
             :returns: None
 
             .. todo:: Rather than have this be so simple, we could probably 
-                make the wihle check act more efficiently
+                make the while check act more efficiently
         """
         while True:
             self.handle()
@@ -75,10 +75,9 @@ class MUDServer(threading.Thread):
 
             :returns: None
 
-            .. todo::
-                Handle logging in.
-                Expand the documentation/clean up this function
-        """
+            This function handles the logging in and registration of users, 
+            as well as sending logged-in users' commands to their entity.
+        """ 
         r, w, e = select.select([self.socket] + self.connections, [], [], 5)
         for conn in r:
             if conn is self.socket:
@@ -90,29 +89,35 @@ class MUDServer(threading.Thread):
                 new_conn.send(splash.encode())
                 self.inbound.append(new_conn)
             elif conn in self.connections:
-                recv_data = conn.recv(1024).decode(errors='replace').rstrip('\r\n')
+                recv_data = conn.recv(1024).decode(errors='replace').\
+                  rstrip('\r\n')
                 if conn in self.inbound:
-                    inbound_user = MongoDB().get_user(recv_data)
+                    inbound_user = stirling.MDB.get_user(recv_data)
                     if type(inbound_user) is not dict:
-                        conn.send('That user is not registered, to '
-                          'do so, please type the password you want.\n'.encode())
+                        conn.send('That user is not registered, to do so, '
+                                  'please type the password you want.'
+                                  '\n'.encode())
                         self.inbound.remove(conn)
                         self.registering[conn] = [recv_data]
                 elif conn in self.registering:
                     if len(self.registering[conn]) is 1:
                         self.registering[conn].append(recv_data)
                         conn.send('To complete registration, please re-enter '
-                          'your password.\n'.encode())
+                                  'your password.\n'.encode())
                     elif len(self.registering[conn]) is 2:
                         if self.registering[conn][1] == recv_data:
-                            conn.send('Passwords match, creating user account.\n'.encode())
-                            new_body = MongoDB().clone_entity('stirling.core.entities.entity.Entity')
+                            conn.send('Passwords match, creating user account.'
+                                      '\n'.encode())
+                            new_body = stirling.MDB.clone_entity(
+                              'stirling.core.entities.Entity')
                             user_info = {
                               'username' : self.registering[conn][0],
-                              'password' : hashlib.sha256(self.registering[conn][1].encode()).hexdigest(),
+                              'password' : hashlib.sha256(
+                                self.registering[conn][1].encode()).hexdigest(),
                               'body'     : new_body._id, }
-                            new_user = MongoDB().users.insert(user_info) 
-                            new_room = MongoDB().clone_entity('world.test_room.testRoom')
+                            stirling.MDB.users.insert(user_info) 
+                            new_room = stirling.MDB.clone_entity(
+                              'world.test_room.testRoom')
                             del self.registering[conn]
                             new_body.move(new_room)
                             new_body.__dict__['exclude'].append('user')
@@ -124,6 +129,4 @@ class MUDServer(threading.Thread):
                             self.registering[conn] = [self.registering[conn][0]]
                 elif conn in self.active:
                     self.active[conn].handle_input(recv_data)
-                    self.active[conn].foo = 'bar'
-                    self.log.debug(self.active[conn].foo)
                 return
