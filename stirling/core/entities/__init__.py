@@ -141,12 +141,16 @@ class Entity(stirling.core.BaseObj):
         """
         return MongoDB().get_clone(self.__dict__['properties']['environment'])
 
-    def handle_input(self, message):
+    def parse_command(self, message):
         """ Handle the parsing of commands
 
             :returns: boolean
         """
-        self.info(message)
+        to_do = stirling.core.parse(message)
+        self.do(to_do)
+        return self.do(to_do)
+
+    def do(self, to_do):
         return True
 
     def move(self, destination):
@@ -160,15 +164,10 @@ class Entity(stirling.core.BaseObj):
             `destination`, if possible.
         """
         if isinstance(destination, Entity) is True:
-            try:
-                self.environment.inventory.remove(self._id)
-            except:
-                pass
-            self.environment = destination._id
-            try:
-                destination.inventory.append(self._id)
-            except:
-                destination.inventory = PersistList(destination, [self._id])
+            destination.inventory.append(self.ent_id)
+            if self.environment is not None:
+                self.environment.inventory.remove(self.ent_id)
+            self.environment = destination
             return True
         else:
             return False
@@ -177,12 +176,17 @@ class Entity(stirling.core.BaseObj):
         """
             .. todo:: Write the actual remove() function.
         """
+        if type(self.environment) is not None:
+            self.environment = None
         return
 
     def destroy(self):
         """
             .. todo:: Write the actual destroy() function.
         """
+        self.remove()
+        stirling.MDB.clones.remove(self.ent_id)
+        del stirling.MDB.loaded_clones[self.ent_id]
         return
 
     def save(self):
@@ -216,11 +220,11 @@ class Properties(dict):
         else:
             dict.__init__(self, [])
         if not from_db:
-            self['_id']     = stirling.MDB.clones.insert(self)
+            self['ent_id']     = stirling.MDB.clones.insert(self)
             self['_class']  = parent.__class__.__name__
             self['_module'] = parent.__class__.__module__
-            parent.__dict__['_id'] = self['_id']
-            stirling.MDB.loaded_clones[self['_id']] = parent
+            parent.__dict__['ent_id'] = self['ent_id']
+            stirling.MDB.loaded_clones[self['ent_id']] = parent
         return
 
     def __setitem__(self, item, value):
@@ -283,8 +287,7 @@ class NameTags(PersistList):
             if self.parent.properties['nametags'].count(item) is 0:
                 PersistList.append(self, item)
                 return True
-            else:
-                return False
+        return False
 
     def remove(self, item):
         return PersistList.remove(self, item)

@@ -19,6 +19,8 @@
     +-------------+------------------------------------------------------------+
     |    PORT     | Port to serve on.  Default is ``5878``.                    |
     +-------------+------------------------------------------------------------+
+    |   DOC_URL   | A HTTP URI pointing to Stirling's documentation.           |
+    +-------------+------------------------------------------------------------+
     |     MDB     | reference to an instance of                                |
     |             | :class:`MongoDB <stirling.core.daemons.mongodb.MongoDB>`   |
     +-------------+------------------------------------------------------------+
@@ -27,15 +29,15 @@
     | MUD_VERSION | The version of the engine you're running.                  |
     +-------------+------------------------------------------------------------+
     | MUD_SPLASH  | A list of random messages rendered upon connection, after  |
-    |             |  the name and version.                                     |
+    |             | the name and version.                                      |
     +-------------+------------------------------------------------------------+
     |  MUD_GREET  | A message shown to players upon connection.                |
     +-------------+------------------------------------------------------------+
-
-    .. todo :: 
-        Add imports to stirling/__init__.py to abbreviate
-        Add more splash text thingies.
+    | ENTRY_ROOM  | The room which will be cloned first and attempted to be    |
+    |             | loaded on reboot.                                          |
+    +-------------+------------------------------------------------------------+
 """
+import logging
 
 from stirling.core.daemons.mongodb import MongoDB
 from stirling.core.daemons.mud import MUDServer
@@ -45,6 +47,8 @@ PORT = 5878
 
 MDB  = MongoDB()
 
+
+DOC_URL     = 'http://emsenn.com/stirling/'
 MUD_NAME    = 'Stirling'
 MUD_VERSION = '0.1.0'
 MUD_SPLASH = [
@@ -59,3 +63,22 @@ MUD_SPLASH = [
 MUD_GREET = ('Welcome to the Stirling MUD.  We are currently in early alpha; '
     'please see https://github.com/emsenn/stirling for details.\n\n'
     'Please input your [desired] username and hit enter.')
+
+ENTRY_ROOM = 'world.loc.afterlife.Entry'
+
+class BaseObj(object):
+    def __init__(self):
+        self.__dict__['logger'] = logging.getLogger(self.__module__)
+        return
+
+    def debug(self, message):
+        return self.__dict__['logger'].debug(message)
+
+    def info(self, message):
+        return self.__dict__['logger'].info(message)
+
+    def warning(self, message):
+        return self.__dict__['logger'].info(message)
+
+    def error(self, message):
+        return self.__dict__['logger'.error(message)

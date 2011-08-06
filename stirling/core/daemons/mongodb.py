@@ -11,7 +11,6 @@
     <stirling.core.daemons.mongodb.persistList>` and :class:`persistDict() 
     <stirling.core.daemons.mongodb.persistDict>`, which interact with `MongoDB`.
 """
-import logging
 import sys
 from pymongo import Connection
 
@@ -44,31 +43,31 @@ class MongoDB(stirling.core.BaseObj):
         self.users = self.database.users
 
 
-    def get_clone(self, _id):
-        """ Find and return an entity matching `_id`.
+    def get_clone(self, ent_id):
+        """ Find and return an entity matching `ent_id`.
 
             .. versionadded:: 0.1
 
-            :param  _id:    A unique identifier for the clone
-            :type   _id:    str
+            :param  ent_id:    A unique identifier for the clone
+            :type   ent_id:    str
 
-            :returns:       object of entity matching `_id` or None
+            :returns:       object of entity matching `ent_id` or None
  
             First checking `self.loaded_clones` then `self.clones`, 
             `get_clone()` returns either the object that matches the 
             provided ID, or None.
         """
-        if _id in self.loaded_clones.keys():
-            return self.loaded_clones[_id]
+        if ent_id in self.loaded_clones.keys():
+            return self.loaded_clones[ent_id]
         else:
-            matches = self.clones.find({'_id': _id})
+            matches = self.clones.find({'ent_id': ent_id})
             if matches.count() > 1:
-                self.log.warning('Too many ID matches!')
+                self.warning('Too many ID matches!')
                 return None
             if matches.count() == 1:
                 path = "%s.%s" % (matches[0]['_module'], matches[0]['_class'])
                 obj = self.clone_entity(path, from_dict=matches[0])
-                self.loaded_clones[_id] = obj 
+                self.loaded_clones[ent_id] = obj 
                 return obj
             else:
                 return None
@@ -101,22 +100,22 @@ class MongoDB(stirling.core.BaseObj):
         ret_list        = []
         if matches:
             for match in matches:
-                if match['_id'] in self.loaded_clones:
-                    ret_list.append(self.loaded_clones['_id'])
+                if match['ent_id'] in self.loaded_clones:
+                    ret_list.append(self.loaded_clones['ent_id'])
                 else:
                     try:
                         __import__(match['_module'])
                         mod = sys.modules[match]['_module']
                     except ImportError:
-                        self.log.warning('Unable to import specified module')
+                        self.warning('Unable to import specified module')
                         return None
                     try:
                         match = getattr(mod, match['_class'])(from_dict=match,
                            from_db=True)
                     except:
-                        self.log.warning('Unable to clone matching entity')
+                        self.warning('Unable to clone matching entity')
                         return None
-                    self.loaded_clones[match._id] = match
+                    self.loaded_clones[match.ent_id] = match
                     ret_list.append[match]
             if ret_list:
                 return ret_list
@@ -165,7 +164,7 @@ class MongoDB(stirling.core.BaseObj):
             self.debug('instancing of class failed')
             return None
         clone.save()
-        self.loaded_clones[clone._id] = clone
+        self.loaded_clones[clone.ent_id] = clone
         return clone
 
     def get_user(self, name):
@@ -188,7 +187,7 @@ class MongoDB(stirling.core.BaseObj):
         else:
             return match
 
-    def make_user(self, name, password):
+    def make_user(self, name, password, ent_id, birthtime):
         """ Creates a new user
 
             .. versionadded:: 0.1
@@ -208,7 +207,8 @@ class MongoDB(stirling.core.BaseObj):
             .. todo:: Add more user properties like creation time, age, and so 
                 on.
         """
-        self.users.insert({ 'username' : name, 'password' : password})
+        self.users.insert({'username' : name, 'password'  : password, 
+                           'ent_id' : ent_id, 'birthtime' : birthtime,})
         return True
 
 class PersistList(list):
