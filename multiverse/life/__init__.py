@@ -9,8 +9,8 @@ def animate(entity):
     """
     if entity.verbs is None:
         entity.verbs = ['standard']
-    entity.__dict__['parse'] = parse
-    entity.__dict__['do_action'] = do_action
+    entity.parse = parse
+    entity.do_action = do_action
     return True
 
 def parse(entity, message):

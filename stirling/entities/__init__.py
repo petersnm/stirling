@@ -7,6 +7,7 @@
 """
 
 import stirling
+import types
 from stirling.base import BaseObj
 from stirling.daemons.mongodb import MongoDB, PersistList, PersistDict
 from multiverse import life
@@ -68,10 +69,13 @@ class Entity(BaseObj):
             self.__dict__[attr] = value
             return
         else:
-            if type(attr) is list:
+            if type(value) is list:
                 self.__dict__['properties'][attr] = PersistList(self, value)
-            elif type(attr) is dict:
+            elif type(value) is dict:
                 self.__dict__['properties'][attr] = PersistDict(self, value)
+            elif type(value) is types.FunctionType:
+                self.__dict__[attr] = types.MethodType(value, self)
+                self.exclude += [attr]
             else:
                 self.__dict__['properties'][attr] = value
             return
