@@ -1,6 +1,6 @@
 """ Contains the MUD server and related classes.
 
-    .. module:: stirling.core.daemons.mud
+    .. module:: stirling.daemons.mud
         :synopsis: The main MUD socket server and related functions
     .. modauthor: Hunter Carroll <abzde@abzde.com>
     .. modauthor: Morgan Sennhauser <emsenn@emsenn.com>
@@ -75,11 +75,11 @@ class MUDServer(threading.Thread):
             This function handles the logging in and registration of users, 
             as well as sending logged-in users' commands to their entity.
         """ 
-        r, w, e = select.select([self.socket] + self.connections, [], [], 5)
-        for conn in r:
+        read  = select.select([self.socket] + self.connections, [], [], 5)[0]
+        for conn in read:
 
             if conn is self.socket:
-                (new_conn, addr) = conn.accept()
+                new_conn = conn.accept()[0]
                 self.connections.append(new_conn)
                 splash = ('{0}\n'
                           '{1}\n'
@@ -95,15 +95,7 @@ class MUDServer(threading.Thread):
             elif conn in self.connections:
                 recv_data = conn.recv(1024).decode(errors='replace')
                 if recv_data is '':
-                    if conn in self.inbound:
-                        self.inbound.remove(conn)
-                    elif conn in self.registering:
-                        del self.registering[conn]
-                    elif conn in self.logging_in:
-                        del self.logging_in[conn]
-                    elif conn in self.active:
-                        del self.active[conn]
-                    self.connections.remove(conn)
+                    self.disconnect(conn)
                 recv_data = recv_data.rstrip('\r\n')
                 if conn in self.inbound:
                     inbound_user = stirling.MDB.get_user(recv_data)
@@ -125,7 +117,7 @@ class MUDServer(threading.Thread):
                     if self.login_user(conn) is True:
                         del self.logging_in[conn]
                 elif conn in self.active:
-                    self.active[conn].parse_command(recv_data)
+                    self.active[conn].parse(recv_data)
                 return
 
     def register_user(self, registrant):
@@ -154,7 +146,6 @@ class MUDServer(threading.Thread):
             +---------------+--------------------------------------------------+
         """
         account = self.registering[registrant]
-        self.log.debug(account)
         stage = len(account)
         done = False
         if stage is 1:
@@ -170,11 +161,11 @@ class MUDServer(threading.Thread):
                 
             else:
                 registrant.send('Passwords do not match!  Try re-entering '
-                                'your desired password.'.encode())
+                                'your desired password.\n'.encode())
                 account.remove(account[1])
                 account.remove(account[1])
         elif stage is 4:
-            new_entity = stirling.MDB.clone_entity('stirling.core.entities.'
+            new_entity = stirling.MDB.clone_entity('stirling.entities.'
                                                    'Entity')
             password = hashlib.sha256(account[1].encode()).hexdigest()
             stirling.MDB.make_user(account[0], password, new_entity.ent_id,
@@ -184,7 +175,7 @@ class MUDServer(threading.Thread):
                             'ready to log in, though if you\'ve never played '
                             '%s before, you may want to go through a basic '
                             'tutorial.  Would you like to do so?\n'
-                            '([Y]/[n])\n' % 
+                            '([Y]/n)\n' % 
                             stirling.MUD_NAME ).encode())
         elif stage is 5:
             if account[4] is 'Y' or 'y' or 'yes' or '':
@@ -207,6 +198,8 @@ class MUDServer(threading.Thread):
         return done
 
     def login_user(self, user):
+        """ Guide a user through login.
+        """
         account = self.logging_in[user]
         stage = len(account)
         done = False
@@ -228,6 +221,8 @@ class MUDServer(threading.Thread):
         return done
 
     def tutorial(self, user, answers):
+        """ Take a user through a quick tutorial explaining how the game works.
+        """
         stage = len(answers)
         if stage is 1:
             message = ('This tutorial is a basic crash course in how '
@@ -243,3 +238,16 @@ class MUDServer(threading.Thread):
                                 stirling.MDB.get_user(
                                 self.registering[user][0])['ent_id'])
             del self.registering[user]
+
+    def disconnect(self, conn):
+        """ Disconnect a user from the server.
+        """
+        if conn in self.inbound:
+            self.inbound.remove(conn)
+        elif conn in self.registering:
+            del self.registering[conn]
+        elif conn in self.logging_in:
+            del self.logging_in[conn]
+        elif conn in self.active:
+            del self.active[conn]
+        self.connections.remove(conn)

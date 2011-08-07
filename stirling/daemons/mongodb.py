@@ -1,22 +1,22 @@
 """
-    .. module:: stirling.core.daemons.mongodb
+    .. module:: stirling.daemons.mongodb
 
     .. moduleauthor:: Hunter Carroll <abzde@abzde.com>
     .. moduleauthor:: Morgan Sennhauser <emsenn@emsenn.com>
     .. versionadded:: 0.1
 
-    The :mod:`mongodb <stirling.core.daemons.mongodb>` module contains the 
-    :class:`MongoDB() <stirling.core.daemons.mongodb.MongoDB>`, as well as 
+    The :mod:`mongodb <stirling.daemons.mongodb>` module contains the 
+    :class:`MongoDB() <stirling.daemons.mongodb.MongoDB>`, as well as 
     modified datatypes :class:`persistList() 
-    <stirling.core.daemons.mongodb.persistList>` and :class:`persistDict() 
-    <stirling.core.daemons.mongodb.persistDict>`, which interact with `MongoDB`.
+    <stirling.daemons.mongodb.persistList>` and :class:`persistDict() 
+    <stirling.daemons.mongodb.persistDict>`, which interact with `MongoDB`.
 """
 import sys
 from pymongo import Connection
 
-import stirling
+from stirling.base import BaseObj
 
-class MongoDB(stirling.core.BaseObj):
+class MongoDB(BaseObj):
     """ Contains the functions used to interact with the external database.  
     """
     def __init__(self):
@@ -57,7 +57,8 @@ class MongoDB(stirling.core.BaseObj):
             `get_clone()` returns either the object that matches the 
             provided ID, or None.
         """
-        if ent_id in self.loaded_clones.keys():
+        if self.loaded_clones is not {} and ent_id in\
+          self.loaded_clones.keys():
             return self.loaded_clones[ent_id]
         else:
             matches = self.clones.find({'ent_id': ent_id})

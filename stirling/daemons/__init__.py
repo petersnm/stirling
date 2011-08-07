@@ -1,6 +1,6 @@
-""" The core daemons that Stirling needs to run.
+""" The daemons that Stirling needs to run.
 
-    .. module: stirling.core.daemons
+    .. module: stirling.daemons
 
     .. modauthor: Morgan Sennhauser <emsenn@emsenn.com>
     .. versionadded: 0.1
@@ -10,11 +10,11 @@
     :term:`glossary entry <daemon>` on them.
 
     There are two daemons that Stirling must have running in order to operate; 
-    :class:`the MUDServer <stirling.core.daemons.mud.MUDServer>` and 
-    :class:`MongoDB <stirling.core.daemons.mongodb.MongoDB>`.
+    :class:`the MUDServer <stirling.daemons.mud.MUDServer>` and 
+    :class:`MongoDB <stirling.daemons.mongodb.MongoDB>`.
 
     
 """
 
-from stirling.core.daemons.mongodb import MongoDB
-from stirling.core.daemons.mud import MUDServer
+from stirling.daemons.mongodb import MongoDB
+from stirling.daemons.mud import MUDServer

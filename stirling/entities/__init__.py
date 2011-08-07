@@ -1,5 +1,5 @@
 """
-    .. module:: stirling.core.entities
+    .. module:: stirling.entities
         :synopsis: Entities are stateful objects
     .. moduleauthor:: Hunter Carroll <abzde@abzde.com>
     .. moduleauthor:: Morgan Sennhauser <emsenn@emsenn.com>
@@ -7,9 +7,11 @@
 """
 
 import stirling
-from stirling.core.daemons.mongodb import MongoDB, PersistList, PersistDict
+from stirling.base import BaseObj
+from stirling.daemons.mongodb import MongoDB, PersistList, PersistDict
+from multiverse import life
 
-class Entity(stirling.core.BaseObj):
+class Entity(BaseObj):
     """ A stateful object within Stirling
     """
     def __init__(self, from_dict=None, from_db=False, **kw):
@@ -40,9 +42,10 @@ class Entity(stirling.core.BaseObj):
         self.nametags   = NameTags(self, ['entity'])
         self.name       = 'Entity'
         self.desc       = 'This is an entity.'
-        self.inventory  = PersistList(self, [])
+        self.inventory  = []
         self.metrics    = {}
         self.environment = None
+        life.animate(self)
 
     def __setattr__(self, attr, value):
         """ Sets an attribute within the object.
@@ -65,7 +68,12 @@ class Entity(stirling.core.BaseObj):
             self.__dict__[attr] = value
             return
         else:
-            self.__dict__['properties'][attr] = value
+            if type(attr) is list:
+                self.__dict__['properties'][attr] = PersistList(self, value)
+            elif type(attr) is dict:
+                self.__dict__['properties'][attr] = PersistDict(self, value)
+            else:
+                self.__dict__['properties'][attr] = value
             return
 
     def __getattr__(self, attr):
@@ -124,7 +132,7 @@ class Entity(stirling.core.BaseObj):
                 self.nametags.remove(self.name)
             except:
                 pass
-            self.properties['nametags'] += name.lower()
+            self.properties['nametags'] += name.lower().split()[-1]
             self.properties['name'] = name
             return True
         else:
@@ -140,18 +148,6 @@ class Entity(stirling.core.BaseObj):
             ID, we need this custom getter.
         """
         return MongoDB().get_clone(self.__dict__['properties']['environment'])
-
-    def parse_command(self, message):
-        """ Handle the parsing of commands
-
-            :returns: boolean
-        """
-        to_do = stirling.core.parse(message)
-        self.do(to_do)
-        return self.do(to_do)
-
-    def do(self, to_do):
-        return True
 
     def move(self, destination):
         """ Moves the entity to a different environment.
@@ -237,7 +233,10 @@ class Properties(dict):
     def __getitem__(self, item):
         """ Returns the value of `item`.
         """
-        return dict.__getitem__(self, item)
+        try:
+            return dict.__getitem__(self, item)
+        except KeyError:
+            return None
 
     def __delitem__(self, item):
         """ Deletes the property `item` and saves.
@@ -257,7 +256,7 @@ class NameTags(PersistList):
     """
     def __init__(self, parent, _list):
         """ Create a new :class:`persistList 
-            <stirling.core.daemons.mongodb.persistList>` for nametags.
+            <stirling.daemons.mongodb.persistList>` for nametags.
 
             :param  parent:     The entity who the nametags belong to.
             :type   parent:     object

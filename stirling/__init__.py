@@ -1,4 +1,4 @@
-""" The main ``__init__`` for the Stirling engine
+""" The main module for the Stirling Engine.
     
     .. module::    stirling
         :synopsis: Stirling MUD engine
@@ -6,10 +6,17 @@
     .. moduleauthor: Morgan Sennhauser <emsenn@emsenn.com>
     .. versionadded:: 0.1
 
-    This module sets up some of the constants that are used through Stirling's 
-    operation and acts as a global config file for the engine.  The following 
-    may be set:
+    The main module for :doc:`the Stirling Engine <index>`, this sets up some 
+    of the constants that are used through Stirling's operation and acts as a 
+    global config file for the engine.  In addition, it defines the 
+    :class:`BaseObj class <stirling.BaseObj>`, which creates the methods 
+    needed by almost all of Stirling's :term:`entities <entity>` and 
+    :term:`daemons <daemon>`.
 
+    .. note:: If you wish to run Stirling, you should use :module:`run_engine` 
+        as an executable.
+
+    The following is a table of all constants which may be set in this module. 
 
     +-------------+------------------------------------------------------------+
     |  Constant   |                         Value                              |
@@ -39,8 +46,7 @@
 """
 import logging
 
-from stirling.core.daemons.mongodb import MongoDB
-from stirling.core.daemons.mud import MUDServer
+from stirling.daemons.mongodb import MongoDB
 
 HOST = '0.0.0.0'
 PORT = 5878
@@ -65,20 +71,3 @@ MUD_GREET = ('Welcome to the Stirling MUD.  We are currently in early alpha; '
     'Please input your [desired] username and hit enter.')
 
 ENTRY_ROOM = 'world.loc.afterlife.Entry'
-
-class BaseObj(object):
-    def __init__(self):
-        self.__dict__['logger'] = logging.getLogger(self.__module__)
-        return
-
-    def debug(self, message):
-        return self.__dict__['logger'].debug(message)
-
-    def info(self, message):
-        return self.__dict__['logger'].info(message)
-
-    def warning(self, message):
-        return self.__dict__['logger'].info(message)
-
-    def error(self, message):
-        return self.__dict__['logger'.error(message)
