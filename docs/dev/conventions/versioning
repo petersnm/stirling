@@ -1,0 +1,6 @@
+===================
+Stirling Versioning
+===================
+
+Stirling uses `semantic versioning <http://semver.org/>`_ to help distinguish 
+between different releases of the source code.
