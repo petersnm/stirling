@@ -112,7 +112,7 @@ class Entity(BaseObj):
 
             Not much more to this one.  Deletes `attr` from the entity.
  
-            :warning: If `attr` is in the entity's `exclude` list, deleting it 
+            .. warning:: If `attr` is in the entity's `exclude` list, deleting it 
               is probably dangerous and will break the entity, if not huge 
               parts of the MUD.
         """
