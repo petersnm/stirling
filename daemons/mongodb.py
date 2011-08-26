@@ -153,7 +153,7 @@ class MongoDB(BaseObj):
             clone = getattr(mod, _class)(*args, **kwargs)
         except:
             self.debug('instancing of class failed')
-            return None
+            return None ###
         clone.save()
         self.loaded_clones[clone.ent_id] = clone
         return clone

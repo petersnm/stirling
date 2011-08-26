@@ -175,6 +175,7 @@ class MUDServer(threading.Thread):
                 account.remove(account[1])
         elif stage is 4:
             new_entity = Mongo.clone_entity('stirling.entities.Entity')
+            print(new_entity)
             password = hashlib.sha256(account[1].encode()).hexdigest()
             Mongo.make_user(account[0], password, 
                                              new_entity.ent_id, datetime.now())

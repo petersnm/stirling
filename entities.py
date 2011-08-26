@@ -71,8 +71,8 @@ class Entity(BaseObj):
             `Properties` dict, `__setattr__` sets attributes within the
             Entity.
         """
-        if hasattr(self, '_set_%s' % (attr,)):
-            return object.__getattribute__(self, "_set_%s" % (attr,))(value)
+        if '_set_%s' % (attr,) in self.__dict__:
+            return self.__dict__["_set_%s" % (attr,)](value)
         elif attr in self.__dict__['exclude'] or attr in self.__dict__:
             self.__dict__[attr] = value
             return
@@ -97,9 +97,9 @@ class Entity(BaseObj):
             First checking for a custom getter or exclusion from the 
             properties dict, `__getattr__()` returns the value of `attr`.
         """
-        if hasattr(self, '_get_%s' % (attr,)):
-            return object.__getattribute__(self, '_get_%s' % (attr,))() 
-        elif attr in self.__dict['exclude']:
+        if '_get_%s' % (attr,) in self.__dict__:
+            return self.__dict__['_get_%s' % (attr,)]() 
+        elif attr in self.__dict__['exclude']:
             return self.__dict__[attr]
         else:
             return self.__dict__['properties'][attr]
