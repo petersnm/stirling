@@ -320,8 +320,8 @@ class PersistDict(dict):
         dict.__init__(self, _dict)
         self.parent = parent
 
-    def __setitem__(self, item):
-        dict.__setitem__(self, item)
+    def __setitem__(self, item, value):
+        dict.__setitem__(self, item, value)
         self.parent.save()
     
     def __delitem__(self, item):
