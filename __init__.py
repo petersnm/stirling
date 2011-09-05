@@ -81,6 +81,7 @@ GREETING = ('Hi there!  You\'ve connected to Stirling, a textual MMORPG '
 
 HOST        =   '0.0.0.0'
 MUD_PORT    =   5878
+HTTP_PORT   =   5877
 
 class BaseObj(object):
     """ The base object behind all :term:`entities <entity>` and 
