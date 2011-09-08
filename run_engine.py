@@ -12,6 +12,9 @@
 """
 import sys
 import os
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 sys.path.insert(0, os.path.abspath('../'))
 
@@ -33,6 +36,10 @@ def start_core():
 
         * ``stirling.HOST`` and ``stirling.MUD_PORT`` to determine where to 
           bind the :class:`MUD server <stirling.daemons.MUDserver>`
+        
+        * ``stirling.HOST`` and ``stirling.HTTP_PORT`` to determine where to
+          bind the :class:`HTTP server
+          <stirling.daemons.servers.http.HTTPServer>`
 
         * ``multiverse.SEED_ROOM`` to determine where to start loading the 
           multiverse from, if none exists already.

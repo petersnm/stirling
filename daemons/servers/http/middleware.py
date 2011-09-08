@@ -39,4 +39,4 @@ class Dispatcher():
         self.rules = rules
 
     def __call__(self, req):
-        return "dispatch-fu!"
+        return "dispatch-fu! foobar"
