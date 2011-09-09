@@ -1,9 +1,11 @@
 import traceback
+import re
+import logging
 
 class StirlingWare():
-    def __init__(self, app):
-        self._inner_app = app
-        self.dispatcher = Dispatcher(self)
+    def __init__(self, dispatch_rules=[]):
+        self.dispatcher = Dispatcher(dispatch_rules)
+        self.logger = logging.getLogger(self.__module__)
 
     def __call__(self, env, start_response):
         try:
@@ -19,8 +21,10 @@ class StirlingWare():
 
 class Request(object):
     def __init__(self, app, env):
+        self.logger = app.logger
         self.app = app
         self.env = env
+        self.path = env['PATH_INFO']
 
     def __getattr__(self, attr):
         try:
@@ -34,9 +38,24 @@ class Request(object):
                 raise 
 
 class Dispatcher():
-    def __init__(self, app, rules=[]):
-        self.app = app
-        self.rules = rules
-
+    def __init__(self, rules=[]):
+        self.rules = []
+        for rule, func in rules:
+            self.rules.append((re.compile(rule), func))
+    
+    def add_rule(self, rule, func):
+        self.rules.append((re.compile(rule), func))
+    
+    def bind(self, rule):
+        def _inner_bind(func):
+            self.rules.append((re.compile(rule), func))
+        return _inner_bind
+    
     def __call__(self, req):
-        return "dispatch-fu! foobar"
+        for rule, func in self.rules:
+            match = rule.match(req.path)
+            if rule.match(req.path): 
+                req.path = req.path[match.end()-1:]
+                return func(req)
+        else:
+            return "404"

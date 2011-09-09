@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../'))
 from stirling.multiverse import SEED_ROOM
 from stirling.daemons import Mongo
 from stirling.daemons.servers import MUD, HTTP
-
+import abzverse
 
 def start_core():
     """ Start the core elements of the engine.
@@ -46,6 +46,7 @@ def start_core():
     """
     if Mongo.search_clones(SEED_ROOM) is None:
         Mongo.clone_entity(SEED_ROOM)
+
     MUD.start()
     HTTP.start()
     return True

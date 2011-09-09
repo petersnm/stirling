@@ -11,6 +11,7 @@ import socket
 from wsgiref.simple_server import make_server
 
 from stirling.daemons.servers.http.reloader import HTTPReloader
+from stirling.daemons.servers.http.default_app import app
 
 logger = logging.getLogger(__name__)
 
@@ -57,10 +58,10 @@ class HTTPServer(threading.Thread):
         super(HTTPServer, self).__init__(*a, **kw)
         self.addr = addr
         self.logger = logger
-        from stirling.daemons.servers.http.middleware import StirlingWare
-        self.server = make_server(addr[0], addr[1], StirlingWare(lambda x: "foo"))
+        self.server = make_server(addr[0], addr[1], app)
         self.server.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                 1)
 
     def run(self):
         self.server.serve_forever()
+

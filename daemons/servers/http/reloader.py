@@ -27,6 +27,8 @@ class HTTPReloader(threading.Thread):
                         if mtime > self.mtimes[module.__file__]:
                             self.logger.info('reloading.. (%s)' % (name,))
                             sys.modules[name] = imp.reload(module)
+                            sys.modules['stirling.daemons.servers.http'] = \
+                                imp.reload(sys.modules['stirling.daemons.servers.http'])
                             self.http_server.server.shutdown()
                             self.running = False
                             break
