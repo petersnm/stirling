@@ -2,19 +2,20 @@ import traceback
 import re
 import logging
 
-class StirlingWare():
-    def __init__(self, dispatch_rules=[]):
-        self.dispatcher = Dispatcher(dispatch_rules)
+class RequestWare():
+    def __init__(self, app):
         self.logger = logging.getLogger(self.__module__)
+        self.app = app
 
     def __call__(self, env, start_response):
         try:
             req = Request(self, env)
-            rules = []
-            res = self.dispatcher(req)
+            res = self.app(req)
+            start_response('200 OK', [('content-type', 'text/html')])
             if type(res) is str:
-                start_response('200 OK', [('content-type', 'text/html')])
                 return [res.encode('utf-8')]
+            else:
+                return res
         except:
             start_response('500 Error', [('content-type', 'text/plain')])
             return [traceback.format_exc().encode('utf-8')]
@@ -37,25 +38,22 @@ class Request(object):
             else:
                 raise 
 
-class Dispatcher():
-    def __init__(self, rules=[]):
-        self.rules = []
-        for rule, func in rules:
-            self.rules.append((re.compile(rule), func))
-    
-    def add_rule(self, rule, func):
-        self.rules.append((re.compile(rule), func))
-    
-    def bind(self, rule):
-        def _inner_bind(func):
-            self.rules.append((re.compile(rule), func))
-        return _inner_bind
-    
+class App:
+    def __init__(self):
+        self.url_patterns = []
+        
     def __call__(self, req):
-        for rule, func in self.rules:
-            match = rule.match(req.path)
-            if rule.match(req.path): 
-                req.path = req.path[match.end()-1:]
+        for pattern, func in self.url_patterns:
+            if pattern.match(req.path):
+                # shorten req.path here #
                 return func(req)
         else:
-            return "404"
+            return "oh noes! 404z!"
+            
+    @staticmethod        
+    def url(pattern):
+        def _inner_url(func):
+            self.url_patterns.append((pattern, func))
+            return func
+        return _inner_url
+
