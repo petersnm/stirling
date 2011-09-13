@@ -3,7 +3,6 @@ import sys
 import os
 import logging
 import imp
-import stirling.www
 
 class HTTPReloader(threading.Thread):
     def __init__(self, http_server, *a, **kw):
@@ -30,9 +29,6 @@ class HTTPReloader(threading.Thread):
                             sys.modules[name] = imp.reload(module)
                             sys.modules['stirling.daemons.servers.http'] = \
                                 imp.reload(sys.modules['stirling.daemons.servers.http'])
-                            sys.modules['stirling.www'] = \
-                                imp.reload(sys.modules['stirling.www'])
-                            stirling.www.start()
                             self.http_server.server.shutdown()
                             self.running = False
                             break
