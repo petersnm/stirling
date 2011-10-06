@@ -14,7 +14,7 @@
 """
 import stirling
 from stirling.daemons.servers.mud import MUDServer
-from stirling.daemons.servers.http import ReloadingHTTPServer
+from stirling.daemons.servers.http import HTTPServer
 
 MUD = MUDServer((stirling.HOST, stirling.MUD_PORT))
-HTTP = ReloadingHTTPServer((stirling.HOST, stirling.HTTP_PORT))
+HTTP = HTTPServer((stirling.HOST, stirling.HTTP_PORT))

@@ -46,7 +46,7 @@ VERSION     =   '0.1.0'
 
 # If you don't want to use random splashes, uncomment this line and comment the 
 # others.
-# SPLASHES = [ 'Based on Stirling' ]
+# SPLASHES = [ ('Based on Stirling v%s' % VERSION) ]
 HTTP_URI    =   'http://emsenn.com/stirling/html/'
 SPLASHES = [
     'Oh bfo!',                  'We love panthers!', 
@@ -71,14 +71,16 @@ SPLASHES = [
     'Next stop: Shangri-La.',   'Rave on, that crazy feeling.',
     'All over now.',            'Love is denser than water.',
     'Original',                 'Sweet confusing moonlight.',
-    'Young money, cash money',  'Construct additional pylons.',]
+    'Young money, cash money',  'Construct additional pylons.',
+    'Bazingle!',                'Go on home, British soldiers, go on home.',]
 GREETING = ('Hi there!  You\'ve connected to Stirling, a textual MMORPG '
             'currently in active development.  You\'re probably here because '
             'you\'ve already heard about the project, and are here to help '
             'with testing or development.  If you have arrived here by '
             'accident, I recommend looking at %s before you '
-            'register a user.' % HTTP_URI )
+            'register a user.' % HTTP_URI)
 
+# 0.0.0.0 for production, localhost for testing
 HOST        =   '0.0.0.0'
 MUD_PORT    =   5878
 HTTP_PORT   =   5877

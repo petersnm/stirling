@@ -16,7 +16,6 @@ class App:
                 if not hasattr(req, 'consumed_path'):
                     req.consumed_path = req.path
                 if match:
-                    # shorten req.path here
                     kw.update(match.groupdict())
                     req.consumed_path = req.consumed_path[match.end():]
                     res = call(req=req, **kw)
@@ -32,8 +31,6 @@ class App:
             if env is None and start_response is None:
                 return res
             ret = res.respond(req.start_response)
-            del req
-            del res
             return ret
         except:
             start_response('500 fffffffuuuuuuuuuuuu', [('content-type', 'text/plain')])
@@ -41,7 +38,7 @@ class App:
         
     def url(self, pattern):
         def _inner_url(call):
-            self.url_patterns.append((re.compile(pattern), call))
+            self.bind(pattern, call)
             return call
         return _inner_url
 
