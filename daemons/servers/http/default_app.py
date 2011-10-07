@@ -1,5 +1,5 @@
 import logging
-from methane import App
+from stirling.daemons.servers.http.middleware import App
 
 default = App('default')
 foo = App('foo')
