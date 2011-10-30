@@ -14,6 +14,7 @@
 """
 
 from stirling.daemons.mongodb import PersistList
+import functools
 
 def animate(entity):
     """ Breathe life into `entity`.
@@ -23,13 +24,36 @@ def animate(entity):
     print(entity)
     if entity.verbs is None:
         entity.verbs = ['standard']
-    entity.parse = parse
-    entity.do_action = do_action
+    entity.__dict__['exclude'] += ['parse', 'do_action']
+    entity.parse = functools.partial(parse, entity)
+    entity.do_action = functools.partial(do_action, entity)
     return True
 
 def parse(entity, message):
     """ Parse a NL command.
     """
+    spl = message.split(' ')
+    if len(spl) > 1:
+        cmd = spl[0]
+        targs = spl[1:]
+    else:
+        cmd = spl[0]
+        targs = []
+    kwargs = {}
+    args = []
+    for arg in targs:
+        if arg.startswith('--'):
+            if '=' in arg:
+                targ = arg[2:].split('=', 1)
+                if len(targ) == 2:
+                    kwargs[targ[0]] = targ[1]
+        elif arg.startswith('-'):
+            for char in arg[1:]:
+                kwargs[char] = True
+        else:
+            args.append(arg)
+    entity.debug("%s | %s | %s" % (cmd, kwargs, args))
+    entity.debug('parsed: %s' % (message,))
     return message
 
 def do_action(self, to_do):

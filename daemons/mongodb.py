@@ -103,9 +103,9 @@ class MongoDB(BaseObj):
                 else:
                     try:
                         __import__(match['_module'])
-                        mod = sys.modules[match]['_module']
-                    except ImportError:
                         self.warning('Unable to import specified module')
+                        return None
+                    except:
                         return None
                     try:
                         match = getattr(mod, match['_class'])(init_dict=match,
