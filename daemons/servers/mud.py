@@ -19,6 +19,7 @@ from datetime import datetime
 
 import stirling
 from stirling.daemons import Mongo
+from stirling.multiverse.energy.life import animate
 
 class MUDServer(threading.Thread):
     """ The MUD server is the main method of connection for users and 
@@ -195,6 +196,7 @@ class MUDServer(threading.Thread):
                 self.active[registrant] = Mongo.get_clone(
                                           Mongo.get_user(
                                           account[0])['ent_id'])
+                animate(self.active[registrant])
                 done = True
             else:
                 registrant.send('That wasn\'t a valid selection.  If you '
@@ -222,6 +224,7 @@ class MUDServer(threading.Thread):
                 self.active[user] = Mongo.get_clone(
                                     Mongo.get_user(
                                     account[0])['ent_id'])
+                animate(self.active[user])
                 done = True
             else:
                 user.send('Password incorrect; please retype it and press '

@@ -20,6 +20,7 @@ def animate(entity):
 
         :param      entity:     The entity
     """
+    print(entity)
     if entity.verbs is None:
         entity.verbs = ['standard']
     entity.parse = parse

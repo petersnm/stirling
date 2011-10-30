@@ -4,6 +4,7 @@
 """
 import sys
 from pymongo import Connection
+import traceback
 
 from stirling import BaseObj
 
@@ -62,10 +63,13 @@ class MongoDB(BaseObj):
                 self.warning('Too many ID matches!')
                 return None
             if matches.count() == 1:
-                path = "%s.%s" % (matches[0]['_module'], matches[0]['_class'])
-                obj = self.clone_entity(path, from_dict=matches[0])
-                self.loaded_clones[ent_id] = obj 
-                return obj
+                try:
+                    path = "%s.%s" % (matches[0]['_module'], matches[0]['_class'])
+                    obj = self.clone_entity(path, init_dict=matches[0])
+                    self.loaded_clones[ent_id] = obj 
+                    return obj
+                except:
+                    print(traceback.format_exc())
             else:
                 return None
 
@@ -104,7 +108,7 @@ class MongoDB(BaseObj):
                         self.warning('Unable to import specified module')
                         return None
                     try:
-                        match = getattr(mod, match['_class'])(from_dict=match,
+                        match = getattr(mod, match['_class'])(init_dict=match,
                            from_db=True)
                     except:
                         self.warning('Unable to clone matching entity')
@@ -152,7 +156,7 @@ class MongoDB(BaseObj):
         try:
             clone = getattr(mod, _class)(*args, **kwargs)
         except:
-            self.debug('instancing of class failed')
+            self.debug(traceback.format_exc())
             return None ###
         clone.save()
         self.loaded_clones[clone.ent_id] = clone
