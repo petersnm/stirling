@@ -15,6 +15,7 @@ import socket
 import select
 import random
 import threading
+import functools
 from datetime import datetime
 
 import stirling
@@ -130,6 +131,13 @@ class MUDServer(threading.Thread):
                     self.active[conn].parse(recv_data)
                 return
 
+    
+    def make_user(self, conn, entity):
+        def send(msg):
+            conn.send(msg.encode())
+        entity.__dict__['exclude'] += ['send']
+        entity.send = send
+    
     def register_user(self, registrant):
         """ Register a new user account
 
@@ -197,6 +205,7 @@ class MUDServer(threading.Thread):
                                           Mongo.get_user(
                                           account[0])['ent_id'])
                 animate(self.active[registrant])
+                self.make_user(registrant, self.active[registrant])
                 done = True
             else:
                 registrant.send('That wasn\'t a valid selection.  If you '
@@ -224,7 +233,9 @@ class MUDServer(threading.Thread):
                 self.active[user] = Mongo.get_clone(
                                     Mongo.get_user(
                                     account[0])['ent_id'])
+                
                 animate(self.active[user])
+                self.make_user(user, self.active[user])
                 done = True
             else:
                 user.send('Password incorrect; please retype it and press '

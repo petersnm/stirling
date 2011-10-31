@@ -12,18 +12,20 @@
         should, which is provide a way for living entities to have 
         'signalling and self-sustaining functions.'
 """
+import functools
+import traceback
+import importlib
 
 from stirling.daemons.mongodb import PersistList
-import functools
+
 
 def animate(entity):
     """ Breathe life into `entity`.
 
         :param      entity:     The entity
     """
-    print(entity)
-    if entity.verbs is None:
-        entity.verbs = ['standard']
+    if entity.cmds is None:
+        entity.cmds = ['stirling.multiverse.cmd.std']
     entity.__dict__['exclude'] += ['parse', 'do_action']
     entity.parse = functools.partial(parse, entity)
     entity.do_action = functools.partial(do_action, entity)
@@ -54,7 +56,18 @@ def parse(entity, message):
             args.append(arg)
     entity.debug("%s | %s | %s" % (cmd, kwargs, args))
     entity.debug('parsed: %s' % (message,))
-    return message
+    try:
+        for cmd_mod in entity.cmds:
+            entity.debug('trying cmd module: %s' % (cmd_mod,))
+            try:
+                mod = importlib.import_module('%s.%s' % (cmd_mod, cmd,))
+                entity.debug('cmd module imported: %s' % (cmd_mod,))
+                return getattr(mod, 'do_%s' % (cmd,))(entity, *args, **kwargs)
+            except ImportError:
+                pass
+    except:
+        entity.debug(traceback.format_exc())
+        return None
 
 def do_action(self, to_do):
     """ Cause the living entity to do `to_do`
