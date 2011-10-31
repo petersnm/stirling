@@ -51,6 +51,10 @@ class Entity(BaseObj):
         self.__dict__['exclude'] = ['properties']
         self.__dict__['properties']    = Properties(self, init_dict, 
                                                     from_db=from_db)
+        if from_db is False:
+            self.initialize()
+
+    def initialize(self):
         self.nametags   = NameTags(self, ['entity'])
         self.name       = 'Entity'
         self.desc       = 'This is a nondescript entity.  It exists.'

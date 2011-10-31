@@ -5,6 +5,7 @@
 import sys
 from pymongo import Connection
 import traceback
+import importlib
 
 from stirling import BaseObj
 
@@ -99,13 +100,12 @@ class MongoDB(BaseObj):
         if matches:
             for match in matches:
                 if match['ent_id'] in self.loaded_clones:
-                    ret_list.append(self.loaded_clones['ent_id'])
+                    ret_list.append(self.loaded_clones[match['ent_id']])
                 else:
                     try:
-                        __import__(match['_module'])
-                        self.warning('Unable to import specified module')
-                        return None
+                        mod = importlib.import_module(match['_module'])
                     except:
+                        self.warning(traceback.format_exc())
                         return None
                     try:
                         match = getattr(mod, match['_class'])(init_dict=match,
@@ -114,7 +114,7 @@ class MongoDB(BaseObj):
                         self.warning('Unable to clone matching entity')
                         return None
                     self.loaded_clones[match.ent_id] = match
-                    ret_list.append[match]
+                    ret_list.append(match)
             if ret_list:
                 return ret_list
             else:

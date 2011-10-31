@@ -1,7 +1,7 @@
 from stirling.entities import Entity
 
 class Camp(Entity):
-    def __init__(self, *a, **kw):
-        Entity.__init__(self, *a, **kw)
+    def initialize(self):
+        Entity.initialize(self)
         self.count_inv = {}
 
