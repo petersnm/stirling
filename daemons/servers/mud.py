@@ -196,9 +196,11 @@ class MUDServer(threading.Thread):
                             '([Y]/n)\n' % 
                             stirling.NAME ).encode())
         elif stage is 5:
-            if account[4] is 'Y' or 'y' or 'yes' or '':
+            if account[4] in ['Y', 'y', 'yes', '']:
+                print('yes')
                 self.tutorial(registrant, account[4])
-            elif account[4] is 'N' or 'n' or 'no':
+            elif account[4] in ['N', 'n', 'no']:
+                print('no')
                 registrant.send('Alright.  You\'re now going to be taken to '
                                 'the game.  Have fun!\n'.encode())
                 self.active[registrant] = Mongo.get_clone(
