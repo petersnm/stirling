@@ -118,9 +118,9 @@ class MongoDB(BaseObj):
             if ret_list:
                 return ret_list
             else:
-                return False
+                return None
         else:
-            return False
+            return None
 
     def clone_entity(self, path, *args, **kwargs):
         """ Creates a :term:`clone` of the class specified by `path`
