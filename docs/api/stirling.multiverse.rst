@@ -14,8 +14,9 @@ Submodules
     stirling.multiverse.space
     stirling.multiverse.time
 
-
-:mod:`multiverse <stirling.multiverse>` module
+:mod:`stirling.multiverse` module
 **********************************************
 
-.. automodule:: stirling.multiverse.__init__
+.. automodule:: stirling.multiverse
+
+
