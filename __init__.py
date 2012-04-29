@@ -5,10 +5,10 @@
     .. moduleauthor: Morgan Sennhauser <emsenn@emsenn.com>
     .. versionadded:: 0.1
 
-    The main ``stirling`` module sets up a few of the constants that are used 
-    across the engine, which are outlined in the table below.  In addition, it 
-    also creates the class :class`BaseObj`, which is the core class behind all 
-    daemons and entities.
+    The main ``stirling`` module sets up a few of the constants that are 
+    used across the engine, which are outlined in the table below.  In 
+    addition, it also creates the class :class`BaseObj`, which is the core 
+    class behind all daemons and entities.
 
     +-------------+------------------------------------------------------------+
     |   CONSTANT  |                         Value                              |
@@ -41,13 +41,14 @@
 
 import logging
 
+
 NAME        =   'Stirling'
 VERSION     =   '0.1.0'
 
 # If you don't want to use random splashes, uncomment this line and comment the 
 # others.
 # SPLASHES = [ ('Based on Stirling v%s' % VERSION) ]
-HTTP_URI    =   'http://emsenn.com/stirling/html/'
+HTTP_URI    =   'http://github.com/emsenn/stirling/'
 SPLASHES = [
     'Oh bfo!',                  'We love panthers!', 
     'PRAISE BEETROOT!',         'It isn\'t work.',
@@ -72,7 +73,10 @@ SPLASHES = [
     'All over now.',            'Love is denser than water.',
     'Original',                 'Sweet confusing moonlight.',
     'Young money, cash money',  'Construct additional pylons.',
-    'Bazingle!',                'Go on home, British soldiers, go on home.',]
+    'Bazingle!',                'Go on home, British soldiers, go on home.',
+    'be here now',              'Exaaaaactly',
+    'FUCKIN\' NIGGERS',         'Go outside, seriously',
+    'Fuck money, get bitches',  'Johnny\'s in the basement']
 GREETING = ('Hi there!  You\'ve connected to Stirling, a textual MMORPG '
             'currently in active development.  You\'re probably here because '
             'you\'ve already heard about the project, and are here to help '

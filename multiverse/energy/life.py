@@ -31,7 +31,7 @@ def animate(entity):
     entity.do_action = functools.partial(do_action, entity)
     return True
 
-def parse(entity, command):
+def parse(entity, message):
     """ Parse a command.
         :param entity:      The entity the command comes from.
         :type entity:       stirling.entity.Entity 

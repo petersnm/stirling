@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 sys.path.insert(0, os.path.abspath('../'))
 
-from stirling.multiverse import SEED_ROOM
 from stirling.daemons import Mongo
 from stirling.daemons.servers import MUD, HTTP
+from stirling.multiverse import Multiverse
 
 def start_core():
     """ Start the core elements of the engine.
@@ -43,11 +43,12 @@ def start_core():
         * ``multiverse.SEED_ROOM`` to determine where to start loading the 
           multiverse from, if none exists already.
     """
-    if Mongo.search_clones(SEED_ROOM) is None:
-        Mongo.clone_entity(SEED_ROOM)
-
     MUD.start()
     HTTP.start()
+    if Mongo.search_clones('stirling.multiverse.Multiverse') is None:
+        Mongo.clone_entity('stirling.multivrse.Multiverse')
+    universe = Mongo.get_clone(Mongo.search_clones('stirling.multiverse.Multiverse')[0].ent_id)
+    universe.start()
     return True
 
 if __name__ == '__main__':
