@@ -1,7 +1,7 @@
 """ Life is the fatal condition of having signaling and self-sustaining 
     functions.
 
-    .. module:: multiverse.life
+    .. module:: stirling.multiverse.energy.life
     .. moduleauthor:: Morgan Sennhauser <emsenn@emsenn.com>
     .. versionadded:: 0.1
 
@@ -31,8 +31,17 @@ def animate(entity):
     entity.do_action = functools.partial(do_action, entity)
     return True
 
-def parse(entity, message):
-    """ Parse a NL command.
+def parse(entity, command):
+    """ Parse a command.
+        :param entity:      The entity the command comes from.
+        :type entity:       stirling.entity.Entity 
+        
+        :param command:     The command recieved.
+        :type command:      str
+        
+        Parses a command recieved from a living. Checks for commands in the
+        modules listed in `entity.cmds` and executes the command, if one is
+        found.
     """
     spl = message.split(' ')
     if len(spl) > 1:
@@ -54,8 +63,6 @@ def parse(entity, message):
                 kwargs[char] = True
         else:
             args.append(arg)
-    entity.debug("%s | %s | %s" % (cmd, kwargs, args))
-    entity.debug('parsed: %s' % (message,))
     try:
         for cmd_mod in entity.cmds:
             entity.debug('trying cmd module: %s' % (cmd_mod,))
