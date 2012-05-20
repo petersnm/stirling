@@ -46,7 +46,7 @@ def start_core():
     MUD.start()
     HTTP.start()
     if Mongo.search_clones('stirling.multiverse.Multiverse') is None:
-        Mongo.clone_entity('stirling.multivrse.Multiverse')
+        Mongo.clone_entity('stirling.multiverse.Multiverse')
     universe = Mongo.get_clone(Mongo.search_clones('stirling.multiverse.Multiverse')[0].ent_id)
     universe.start()
     return True

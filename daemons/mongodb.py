@@ -151,7 +151,8 @@ class MongoDB(BaseObj):
             __import__(_module)
             mod = sys.modules[_module]
         except ImportError:
-            self.debug('import of module failed')
+            self.debug('import of module `%s` failed' % (_module,))
+            self.debug(traceback.format_exc())
             return None
         try:
             clone = getattr(mod, _class)(*args, **kwargs)
