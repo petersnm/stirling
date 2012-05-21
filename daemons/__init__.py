@@ -13,3 +13,4 @@
 from stirling.daemons.mongodb import MongoDB
 
 Mongo = MongoDB()
+
