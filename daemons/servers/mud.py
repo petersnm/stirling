@@ -61,7 +61,10 @@ class MUDServer(threading.Thread):
         self.inbound     = []
         self.registering = {}
         self.logging_in  = {}
+        self.tutorialing = {}
         self.active      = {}
+        # XXX i'm almost entirely sure PEP8 says not do to extra spacing like
+        # XXX that.
         self.log = logging.getLogger(self.__module__)
         return
 
@@ -123,6 +126,10 @@ class MUDServer(threading.Thread):
                     self.registering[conn].append(recv_data)
                     if self.register_user(conn) is True:
                         del self.registering[conn]
+                elif conn in self.tutorialing:
+                    self.tutorialing[conn].append(recv_data)
+                    if self.tutorial(conn) is True:
+                        del self.tutorialing[conn]
                 elif conn in self.logging_in:
                     self.logging_in[conn].append(recv_data)
                     if self.login_user(conn) is True:
@@ -184,7 +191,6 @@ class MUDServer(threading.Thread):
                 account.remove(account[1])
         elif stage is 4:
             new_entity = Mongo.clone_entity('stirling.entities.Entity')
-            print(new_entity)
             password = hashlib.sha256(account[1].encode()).hexdigest()
             Mongo.make_user(account[0], password, 
                                              new_entity.ent_id, datetime.now())
@@ -197,10 +203,9 @@ class MUDServer(threading.Thread):
                             stirling.NAME ).encode())
         elif stage is 5:
             if account[4] in ['Y', 'y', 'yes', '']:
-                print('yes')
-                self.tutorial(registrant, account[4])
+                self.tutorialing[registrant] = [account[0]]
+                done = True
             elif account[4] in ['N', 'n', 'no']:
-                print('no')
                 registrant.send('Alright.  You\'re now going to be taken to '
                                 'the game.  Have fun!\n'.encode())
                 self.active[registrant] = Mongo.get_clone(
@@ -215,8 +220,6 @@ class MUDServer(threading.Thread):
                                 '\'no\' and hit enter.  Otherwise, just hit '
                                 'enter.\n'.encode())
                 account.remove(account[4])
-        elif stage > 5:
-            self.tutorial(registrant, account[4:])
         return done
 
     def login_user(self, user):
@@ -245,10 +248,12 @@ class MUDServer(threading.Thread):
                 account.remove(account[1])
         return done
 
-    def tutorial(self, user, answers):
+    def tutorial(self, user):
         """ Take a user through a quick tutorial explaining how the game works.
         """
-        stage = len(answers)
+        answers = self.tutorialing[user]
+        stage = len(answers) - 1
+        done = False
         if stage is 1:
             message = ('This tutorial is a basic crash course in how '
                        'commands work.  If you want a more full explanation '
@@ -258,11 +263,14 @@ class MUDServer(threading.Thread):
                        'is no tutorial here.  Hit enter to continue.\n' 
                        % (stirling.NAME, stirling.HTTP_URI))
             user.send(message.encode())
-        if stage is 2:
+        elif stage is 2:
             self.active[user] = Mongo.get_clone(
                                 Mongo.get_user(
-                                self.registering[user][0])['ent_id'])
-            del self.registering[user]
+                                self.tutorialing[user][0])['ent_id'])
+            animate(self.active[user])
+            self.make_user(user, self.active[user])
+            done = True
+        return done
 
     def disconnect(self, conn):
         """ Disconnect a user from the server.
