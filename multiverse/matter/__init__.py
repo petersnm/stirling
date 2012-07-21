@@ -26,4 +26,3 @@ class Matter(Entity):
                                   via :py:func:`super`.
         """
         super(Matter, self).__init__(**kw)
-        self.mass = 4.2e-40

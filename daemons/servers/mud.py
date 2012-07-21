@@ -141,7 +141,7 @@ class MUDServer(threading.Thread):
     
     def make_user(self, conn, entity):
         def send(msg):
-            conn.send(msg.encode())
+            conn.send((msg + '\n').encode())
         entity.__dict__['exclude'] += ['send']
         entity.send = send
     
@@ -195,6 +195,7 @@ class MUDServer(threading.Thread):
             Mongo.make_user(account[0], password, 
                                              new_entity.ent_id, datetime.now())
             new_entity.user = Mongo.get_user(account[0])
+            new_entity.interactive = True
             registrant.send(('User account successfully created.  You\'re now '
                             'ready to log in, though if you\'ve never played '
                             '%s before, you may want to go through a basic '
@@ -241,6 +242,7 @@ class MUDServer(threading.Thread):
                 
                 animate(self.active[user])
                 self.make_user(user, self.active[user])
+                self.active[user].cmds.append('stirling.multiverse.energy.meta')
                 done = True
             else:
                 user.send('Password incorrect; please retype it and press '

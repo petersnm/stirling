@@ -43,7 +43,5 @@ class Multiverse(Entity):
         """ This is a debug function to test things in the Multiverse.
         """
         self.debug('Starting Multiverse.start() function...')
-        a_thing = Matter()
-        self.debug(a_thing.mass)
         self.debug('Ending Multiverse.start() function...')
         return True

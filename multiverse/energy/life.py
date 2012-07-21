@@ -25,7 +25,7 @@ def animate(entity):
         :param      entity:     The entity
     """
     if entity.cmds is None:
-        entity.cmds = ['stirling.multiverse.cmd.std']
+        entity.cmds = ['stirling.multiverse.energy.std', 'stirling.multiverse.energy.meta']
     entity.__dict__['exclude'] += ['parse', 'do_action']
     entity.parse = functools.partial(parse, entity)
     entity.do_action = functools.partial(do_action, entity)
@@ -43,7 +43,17 @@ def parse(entity, message):
         modules listed in `entity.cmds` and executes the command, if one is
         found.
     """
-    spl = message.split(' ')
+    command = message.split(' ')
+    entity.command_history.append(command)
+    verb = command[0]
+    # TODO: check if the verb is an an alias
+    if entity.environment != None:
+        if verb in entity.environment.exits:
+            entity.move(verb)
+    
+        
+    
+
     if len(spl) > 1:
         cmd = spl[0]
         targs = spl[1:]
