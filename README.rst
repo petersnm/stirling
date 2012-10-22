@@ -2,4 +2,5 @@
 The Stirling Engine
 ===================
 
-Please see the :doc:`index`.
+Stirling is a game engine for creating text-based MMORPGs, also known as MUDs.
+For more information, check out index.rst, in the /doc directory.
