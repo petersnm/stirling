@@ -19,10 +19,15 @@ class Matter(Entity):
                         matter's resistance to acceleration.
         :type   mass:   float 
     """
-    def __init__(self, **kw):
+    def __init__(self, name, **kw):
         """ Initialize a new instance of matter.
 
+            :param  name:       The entity's proper name.  Should be written 
+                                  as it should be rendered in game.
+            :type   name:       str
             :param  **kw:       Any arguments are passed to the parent class 
                                   via :py:func:`super`.
         """
         super(Matter, self).__init__(**kw)
+        self.name = name
+        self.ids = {'object','entity'}
