@@ -76,13 +76,24 @@ SPLASHES = [
     'Bazingle!',                'Go on home, British soldiers, go on home.',
     'be here now',              'Exaaaaactly',
     'FUCKIN\' NIGGERS',         'Go outside, seriously',
-    'Fuck money, get bitches',  'Johnny\'s in the basement']
-GREETING = ('Hi there!  You\'ve connected to Stirling, a textual MMORPG '
-            'currently in active development.  You\'re probably here because '
-            'you\'ve already heard about the project, and are here to help '
-            'with testing or development.  If you have arrived here by '
-            'accident, I recommend looking at %s before you '
-            'register a user.' % HTTP_URI)
+    'Fuck money, get bitches',  'Johnny\'s in the basement',
+    'I wanna bury you',         'I love you everything burrito',
+    'Everybody\'s talkin\'',    'Redododiculous',
+    'Be calmed by my saliva',   'I know you wanna slump up on these lumps',
+    'This *does* compute',      'Youz ain't special',
+    'Bunk this flip',           'You gonna do that thing again?',
+    'What the what',            'Must this pig walk, forever alone?',
+    'monkey watermelon,         'Everything is chemicals',
+    'WHATEVERS 2009!',          'What the cabbage?',
+    'All about feeding hobos',  'Would you like to hear what my nuts have to say?',
+    'Y'all whack with poobrain',
+    ]
+GREETING = ('Stirling is a engine for building textual MMORPGs, and is currently '
+            'in really really really early development.  So unless you're a '
+            'developer, there is not much here for you to do.  If you are a '
+            'developer, you probably don't even read this message anymore, and '
+            'won't notice that I've changed it for quite some time.  For more '
+            'information, check out %s' % HTTP_URI)
 
 # 0.0.0.0 for production, localhost for testing
 HOST        =   '0.0.0.0'
