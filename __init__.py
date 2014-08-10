@@ -43,7 +43,7 @@ import logging
 
 
 NAME        =   'Stirling'
-VERSION     =   '0.1.0'
+VERSION     =   '0.1.1'
 
 # If you don't want to use random splashes, uncomment this line and comment the 
 # others.
@@ -80,19 +80,19 @@ SPLASHES = [
     'I wanna bury you',         'I love you everything burrito',
     'Everybody\'s talkin\'',    'Redododiculous',
     'Be calmed by my saliva',   'I know you wanna slump up on these lumps',
-    'This *does* compute',      'Youz ain't special',
+    'This *does* compute',      'Youz ain\'t special',
     'Bunk this flip',           'You gonna do that thing again?',
     'What the what',            'Must this pig walk, forever alone?',
-    'monkey watermelon,         'Everything is chemicals',
+    'monkey watermelon,'         'Everything is chemicals',
     'WHATEVERS 2009!',          'What the cabbage?',
     'All about feeding hobos',  'Would you like to hear what my nuts have to say?',
-    'Y'all whack with poobrain',
+    'Y\'all whack with poobrain',
     ]
 GREETING = ('Stirling is a engine for building textual MMORPGs, and is currently '
-            'in really really really early development.  So unless you're a '
+            'in really really really early development.  So unless you\'re a '
             'developer, there is not much here for you to do.  If you are a '
-            'developer, you probably don't even read this message anymore, and '
-            'won't notice that I've changed it for quite some time.  For more '
+            'developer, you probably don\'t even read this message anymore, and '
+            'won\'t notice that I\'ve changed it for quite some time.  For more '
             'information, check out %s' % HTTP_URI)
 
 # 0.0.0.0 for production, localhost for testing

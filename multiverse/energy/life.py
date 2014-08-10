@@ -29,6 +29,7 @@ def animate(entity):
     entity.__dict__['exclude'] += ['parse', 'do_action']
     entity.parse = functools.partial(parse, entity)
     entity.do_action = functools.partial(do_action, entity)
+    entity.command_history = []
     return True
 
 def parse(entity, message):
@@ -47,44 +48,12 @@ def parse(entity, message):
     entity.command_history.append(command)
     verb = command[0]
     # TODO: check if the verb is an an alias
+    entity.debug('verb is %s' % (verb,))
     if entity.environment != None:
         if verb in entity.environment.exits:
             entity.move(verb)
-    
-        
-    
-
-    if len(spl) > 1:
-        cmd = spl[0]
-        targs = spl[1:]
-    else:
-        cmd = spl[0]
-        targs = []
-    kwargs = {}
-    args = []
-    for arg in targs:
-        if arg.startswith('--'):
-            if '=' in arg:
-                targ = arg[2:].split('=', 1)
-                if len(targ) == 2:
-                    kwargs[targ[0]] = targ[1]
-        elif arg.startswith('-'):
-            for char in arg[1:]:
-                kwargs[char] = True
-        else:
-            args.append(arg)
-    try:
-        for cmd_mod in entity.cmds:
-            entity.debug('trying cmd module: %s' % (cmd_mod,))
-            try:
-                mod = importlib.import_module('%s.%s' % (cmd_mod, cmd,))
-                entity.debug('cmd module imported: %s' % (cmd_mod,))
-                return getattr(mod, 'do_%s' % (cmd,))(entity, *args, **kwargs)
-            except ImportError:
-                pass
-    except:
-        entity.debug(traceback.format_exc())
-        return None
+    entity.send('Your verb was %s' % (verb,))
+    return
 
 def do_action(self, to_do):
     """ Cause the living entity to do `to_do`
