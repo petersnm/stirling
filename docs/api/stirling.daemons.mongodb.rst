@@ -1,8 +1,8 @@
-==========================
-``mongodb`` - The Database
-==========================
+===========
+``MongoDB``
+===========
 
-The ``mongodb`` Stirling module handles the engine's interaction with the 
+The ``MongoDB`` Stirling module handles the engine's interaction with the 
 external Mongo database server.  We have the daemon class :class:`MongoDB` to 
 help interface with Mongo, and the two 
 custom datatypes :class:`PersistList <stirling.daemons.mongodb.PersistList>` 

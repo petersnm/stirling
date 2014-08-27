@@ -1,6 +1,8 @@
 """
     .. module:: stirling.daemons.mongodb
-    .. versionadded:: 0.1
+        :synopsis: Handles the interactions between Stirling and MongoDB
+    .. moduleauthor:: emsenn <morgan.sennhauser@gmail.com>
+    .. versionadded:: 0.1.1
 """
 import sys
 from pymongo import Connection
@@ -18,8 +20,6 @@ class MongoDB(BaseObj):
     def __init__(self):
         """ Upon initialization, MongoDB connects to the external Mongo 
             server and sets up the clones and user collections.  
-
-            .. versionadded:: 0.1
 
             :var    database:       external Mongo database ``entities``.
             :var    clones:         All cloned entities, loaded and unloaded.
