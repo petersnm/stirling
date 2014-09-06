@@ -91,6 +91,7 @@ SPLASHES = [
     'you are a part of all you have met,', 'Don\'t be that guy.',
     'All part of the proverbial "it."', 'Profane',
     'Less frequently useful than a broken clock', '#3cc',
+    'showin\' up is the biggest part of showin\' up.',
     ]
 GREETING = ('Stirling is a engine for building textual MMORPGs, and is currently '
             'in really really really early development.  So unless you\'re a '
