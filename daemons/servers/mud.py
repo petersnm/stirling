@@ -50,8 +50,11 @@ class MUDServer(threading.Thread):
         self.log = logging.getLogger(self.__module__)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.log.info('Attempting to bind MUDServer daemon...')
         try:
             self.socket.bind(addr)
+            self.log.info('MUDServer daemon successfully bound to port %s' % 
+                (stirling.MUD_PORT))
         except:
             self.log.warning('Tried to started MUDServer() when it was already '
                              'online.')

@@ -1,11 +1,10 @@
-#!/usr/bin/python3.2
+#!/usr/bin/python3.4
 """
 
     .. module:: stirling.runengine
         :synopsis: Start the Stirling Engine
-    .. moduleauthor:: Hunter Carroll <abzde@abzde.com>
     .. moduleauthor:: Morgan Sennhauser <emsenn@emsenn.com>
-    .. versionadded:: 0.1
+    .. versionadded:: 0.1.1
 
     When the :func:`start_core()` function is called, the multiverse will 
     kick into existence.

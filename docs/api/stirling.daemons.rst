@@ -19,7 +19,7 @@ server to handle incoming user connections and send them MUD-style output.
   the :class:`MongoDB <stirling.daemon.mongodb>` daemon to make a user, you 
   would use ``stirling.daemons.Mongo.make_user()``.  This convention and 
   others are more thoroughly explained in the :doc:`Developer Handbook 
-  </dev/intro>`.
+  </dev/index>`.
 
 .. todo:: Add a HTTP server to act as alternative way of interacting with 
   - the engine.

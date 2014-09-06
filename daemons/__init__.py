@@ -1,13 +1,15 @@
-""" Daemons control the complex interactions between :term:`entities <entity>`.
+""" Daemons control interactions between entities, and handle processes 
+    not suitable for entities.
 
     .. module: stirling.daemons
-    .. modauthor: Morgan Sennhauser <emsenn@emsenn.com>
-    .. versionadded: 0.1
+        :synopsis: Imports and instances critical daemons.
+    .. modauthor: emsenn <morgan.sennhauser@gmail.com>
+    .. versionadded: 0.1.1
 
-    This module imports and creates an instance of :class:`MongoDB 
-    <stirling.daemons.mongodb>` named ``stirling.daemons.Mongo``.  At the 
-    moment, this is the only thing the main daemon module does, mostly because 
-    so far, the MongoDB daemon is our only non-server daemon!
+    This module imports and instances critical daemons.  At the moment this 
+    is only the MongoDB daemon.
+
+    :var    Mongo:      an instance of :class:`MongoDB <stirling.daemons.mongodb>`
 """
 
 from stirling.daemons.mongodb import MongoDB

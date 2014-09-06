@@ -2,7 +2,7 @@
     .. module:: stirling.daemons.servers.http
         :synopsis: HTTP daemon and code reloader for Stirling
     .. moduleauthor:: Hunter Carroll <abzde@abzde.com>
-    .. versionadded:: 0.2
+    .. versionadded:: 0.1.1
 """
 
 import threading

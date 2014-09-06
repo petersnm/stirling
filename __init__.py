@@ -1,9 +1,9 @@
 """ The main module for the Stirling Engine.
     
     .. module::    stirling
-        :synopsis: Stirling MUD
-    .. moduleauthor: Morgan Sennhauser <emsenn@emsenn.com>
-    .. versionadded:: 0.1
+        :synopsis: Main module for a persistent multiplayer role-playing game
+    .. moduleauthor: emsenn <morgan.sennhauser@gmail.com>
+    .. versionadded:: 0.1.1
 
     The main ``stirling`` module sets up a few of the constants that are 
     used across the engine, which are outlined in the table below.  In 
@@ -43,7 +43,7 @@ import logging
 
 
 NAME        =   'Stirling'
-VERSION     =   '0.1.0'
+VERSION     =   '0.1.1'
 
 # If you don't want to use random splashes, uncomment this line and comment the 
 # others.
@@ -80,19 +80,24 @@ SPLASHES = [
     'I wanna bury you',         'I love you everything burrito',
     'Everybody\'s talkin\'',    'Redododiculous',
     'Be calmed by my saliva',   'I know you wanna slump up on these lumps',
-    'This *does* compute',      'Youz ain't special',
+    'This *does* compute',      'Youz ain\'t special',
     'Bunk this flip',           'You gonna do that thing again?',
     'What the what',            'Must this pig walk, forever alone?',
-    'monkey watermelon,         'Everything is chemicals',
+    'monkey watermelon,'         'Everything is chemicals',
     'WHATEVERS 2009!',          'What the cabbage?',
     'All about feeding hobos',  'Would you like to hear what my nuts have to say?',
-    'Y'all whack with poobrain',
+    'Y\'all whack with poobrain', 'Hah that fly\'s poopin\' on your foot.',
+    'Supercaliswagalisticsexyhelladopeness', 'Don\'t stay up too late.',
+    'you are a part of all you have met,', 'Don\'t be that guy.',
+    'All part of the proverbial "it."', 'Profane',
+    'Less frequently useful than a broken clock', '#3cc',
+    'showin\' up is the biggest part of showin\' up.',
     ]
 GREETING = ('Stirling is a engine for building textual MMORPGs, and is currently '
-            'in really really really early development.  So unless you're a '
+            'in really really really early development.  So unless you\'re a '
             'developer, there is not much here for you to do.  If you are a '
-            'developer, you probably don't even read this message anymore, and '
-            'won't notice that I've changed it for quite some time.  For more '
+            'developer, you probably don\'t even read this message anymore, and '
+            'won\'t notice that I\'ve changed it for quite some time.  For more '
             'information, check out %s' % HTTP_URI)
 
 # 0.0.0.0 for production, localhost for testing
@@ -112,26 +117,38 @@ class BaseObj(object):
         """
         # The reason logger is added to self.__dict__ rather than set by 
         # using self.logger is because of the fact that entities' persistence 
-        # requires it.
+        # requires it. ! DON'T CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING! !
         self.__dict__['logger'] = logging.getLogger(self.__module__)
         return
 
     def debug(self, message):
         """ Print the debug `message` to console.
+
+            :param  message:        The message to be shown to the console.
+            :type   message:        str
         """
         return self.__dict__['logger'].debug(message)
 
     def info(self, message):
         """ Print the informative `message` to console.
+
+            :param  message:        The message to be shown to the console.
+            :type   message:        str
         """
         return self.__dict__['logger'].info(message)
 
     def warning(self, message):
         """ Print the warning `message` to console.
+
+            :param  message:        The message to be shown to the console.
+            :type   message:        str
         """
         return self.__dict__['logger'].warning(message)
 
     def error(self, message):
         """ Print the error `message` to console.
+
+            :param  message:        The message to be shown to the console.
+            :type   message:        str
         """
         return self.__dict__['logger'].error(message)

@@ -41,6 +41,9 @@ A list of all the terms that Stirling uses in a specific way.
     multiverse
         The collection of entities that make up everything in existence.
 
+    mud
+        Short for *Multi-User Dimension*, MUDs are an old-school genre of 
+        computer games.  Basically, text-based MMOs.
     nametag
         An :term:`entity` has a list of nametags, which are all the nouns that 
         may be used to refer to the object.  A baker may have the nametags 
@@ -49,6 +52,13 @@ A list of all the terms that Stirling uses in a specific way.
     NPC
         NPC stands for *non-player character*, and is a catch-all term used to 
         refer to any living entity not controlled by a user.
+
+    persistence
+        Within Stirling, persistence refers to the property of entities 
+        being stateful.  That means that everything about them is saved, 
+        all the time.  So no arbitrary loading of entities; once an entity 
+        is brought into the multiverse, it's there to stay. (Until some 
+        unfortunateness happens to it, of course.)
 
     properties
         The physical attributes of an :term:`entity`.
